@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Lesson Block Schema",
+  "description": "JSON schema for validating lesson block structure in Structural Learning platform",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "title",
+    "description",
+    "steps",
+    "skill",
+    "supporting_question"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^block-[a-zA-Z0-9]{8}$",
+      "description": "Unique identifier for the block (format: block-xxxxxxxx)"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["MapIt", "SayIt", "BuildIt"],
+      "description": "The type of learning block from Structural Learning framework"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 100,
+      "description": "Clear, engaging title for the activity"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 500,
+      "description": "2-3 sentences explaining what students will do"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 200
+      },
+      "description": "Clear, actionable steps for completing the activity"
+    },
+    "skill": {
+      "type": "object",
+      "required": ["name", "color", "icon_url", "category"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "Identify", "Retrieve", "Eliminate", "Extract",
+            "Categorise", "Compare", "Rank", "Sequence", "Connect",
+            "Explain", "Validate", "Exemplify", "Verify", "Amplify",
+            "Verbs", "Adverbs", "Adjectives", "Conjunctions", "Prepositions", "Target Vocabulary",
+            "Hypothesise", "Judge", "Combine", "Imagine", "Designate", "Summarise", 
+            "Generate Questions", "Integrate", "Generalise", "Complete", "Elaborate", 
+            "New Perspective", "Infer"
+          ],
+          "description": "Name of the thinking skill from Structural Learning framework"
+        },
+        "color": {
+          "type": "string",
+          "enum": ["Green", "Blue", "Yellow", "Orange", "Red"],
+          "description": "Color category of the thinking skill"
+        },
+        "icon_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://cdn\\.structural-learning\\.com/icons/",
+          "description": "URL to the skill icon image"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "Getting Started",
+            "Organizing Ideas", 
+            "Critical Thinking",
+            "Communicating Understanding",
+            "Applying Knowledge"
+          ],
+          "description": "Human-readable category name for the skill"
+        }
+      },
+      "description": "Metadata about the thinking skill used in this block"
+    },
+    "supporting_question": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200,
+      "description": "Question that guides student thinking and supports the skill development"
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "maxItems": 5,
+      "description": "URLs to supporting media (templates, images, diagrams, etc.)"
+    },
+    "sentence_starters": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 100
+      },
+      "maxItems": 6,
+      "description": "Sentence starters for SayIt activities to scaffold discussion"
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "maxItems": 10,
+      "description": "Required materials for BuildIt activities"
+    },
+    "target_words": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 30
+      },
+      "maxItems": 10,
+      "description": "Target vocabulary words for language-focused activities"
+    },
+    "criteria": {
+      "type": "array", 
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 100
+      },
+      "maxItems": 6,
+      "description": "Evaluation criteria for judgment and decision-making activities"
+    }
+  },
+  "additionalProperties": false,
+  "if": {
+    "properties": {
+      "type": { "const": "SayIt" }
+    }
+  },
+  "then": {
+    "properties": {
+      "sentence_starters": {
+        "minItems": 1
+      }
+    }
+  },
+  "else": {
+    "if": {
+      "properties": {
+        "type": { "const": "BuildIt" }
+      }
+    },
+    "then": {
+      "anyOf": [
+        {
+          "properties": {
+            "materials": {
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "criteria": {
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}

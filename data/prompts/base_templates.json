@@ -1,0 +1,84 @@
+{
+  "MapIt": {
+    "Categorise": {
+      "template": "Create a MapIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Categorise' to help students group related items or concepts.\n\nCurriculum Context:\n{{curriculum_context}}\n\nSuggest using a graphic organizer like sorting boxes, tree diagram, or categorization chart.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the activity\n- description: 2-3 sentences explaining what students will do\n- steps: An array of 3-4 clear, actionable steps\n- supporting_question: A question that helps guide student thinking\n\nMake it age-appropriate for {{grade}} level and aligned with {{curriculum}} standards.",
+      "media_suggestion": "sorting-template.png"
+    },
+    "Compare": {
+      "template": "Create a MapIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Compare' to help students identify similarities and differences.\n\nCurriculum Context:\n{{curriculum_context}}\n\nSuggest using a Venn diagram, comparison chart, or T-chart as the graphic organizer.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the activity\n- description: 2-3 sentences explaining the comparison task\n- steps: An array of 3-4 clear steps for completing the comparison\n- supporting_question: A question that guides comparative thinking\n\nEnsure the content is appropriate for {{grade}} level and follows {{curriculum}} standards.",
+      "media_suggestion": "venn-diagram.png"
+    },
+    "Sequence": {
+      "template": "Create a MapIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Sequence' to help students order information by time, logic, or importance.\n\nCurriculum Context:\n{{curriculum_context}}\n\nSuggest using a flow chart, timeline, or sequence diagram as the graphic organizer.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the sequencing activity\n- description: 2-3 sentences explaining the sequencing task\n- steps: An array of 3-4 clear steps for creating the sequence\n- supporting_question: A question that helps students think about order or progression\n\nMake it developmentally appropriate for {{grade}} level and aligned with {{curriculum}} standards.",
+      "media_suggestion": "flow-chart.png"
+    },
+    "Rank": {
+      "template": "Create a MapIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Rank' to help students order items by importance, value, or preference.\n\nCurriculum Context:\n{{curriculum_context}}\n\nSuggest using a ranking ladder, diamond 9, or priority pyramid as the graphic organizer.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the ranking activity\n- description: 2-3 sentences explaining the ranking criteria and task\n- steps: An array of 3-4 clear steps for completing the ranking\n- supporting_question: A question that helps students justify their ranking decisions\n\nEnsure the activity is suitable for {{grade}} level and follows {{curriculum}} guidelines.",
+      "media_suggestion": "ranking-template.png"
+    },
+    "Connect": {
+      "template": "Create a MapIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Connect' to help students create links between different ideas or concepts.\n\nCurriculum Context:\n{{curriculum_context}}\n\nSuggest using a mind map, concept map, or connection web as the graphic organizer.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the connection activity\n- description: 2-3 sentences explaining how students will make connections\n- steps: An array of 3-4 clear steps for identifying and mapping connections\n- supporting_question: A question that encourages students to find relationships\n\nMake it appropriate for {{grade}} level and aligned with {{curriculum}} standards.",
+      "media_suggestion": "mind-map.png"
+    },
+    "Identify": {
+      "template": "Create a MapIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Identify' to help students recognize and name key elements.\n\nCurriculum Context:\n{{curriculum_context}}\n\nSuggest using a labeling diagram, identification chart, or visual checklist.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the identification activity\n- description: 2-3 sentences explaining what students will identify\n- steps: An array of 3-4 clear steps for the identification process\n- supporting_question: A question that guides student observation and recognition\n\nEnsure it's age-appropriate for {{grade}} level and follows {{curriculum}} standards.",
+      "media_suggestion": "identification-chart.png"
+    }
+  },
+  
+  "SayIt": {
+    "Explain": {
+      "template": "Create a SayIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Explain' to help students communicate their understanding clearly.\n\nCurriculum Context:\n{{curriculum_context}}\n\nInclude discussion prompts and sentence starters to scaffold student explanations.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the explanation activity\n- description: 2-3 sentences about what students will explain and how\n- steps: An array of 3-4 steps that guide students through the explanation process\n- supporting_question: An open-ended question that prompts detailed explanation\n- sentence_starters: An array of 3-4 sentence starters to help students begin their explanations\n\nMake it appropriate for {{grade}} level communication skills and {{curriculum}} standards.",
+      "sentence_starters": [
+        "I think this happens because...",
+        "The main reason is...",
+        "This connects to... because..."
+      ]
+    },
+    "Validate": {
+      "template": "Create a SayIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Validate' to help students provide evidence for their ideas.\n\nCurriculum Context:\n{{curriculum_context}}\n\nInclude prompts that encourage students to support their thinking with evidence.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the evidence-based discussion\n- description: 2-3 sentences about finding and sharing evidence\n- steps: An array of 3-4 steps for gathering and presenting evidence\n- supporting_question: A question that asks students to prove or support their thinking\n- sentence_starters: An array of 3-4 sentence starters focused on evidence\n\nEnsure it's developmentally appropriate for {{grade}} level and aligns with {{curriculum}} standards.",
+      "sentence_starters": [
+        "I know this because...",
+        "The evidence shows that...",
+        "I can prove this by..."
+      ]
+    },
+    "Target Vocabulary": {
+      "template": "Create a SayIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Target Vocabulary' to help students use specific academic language correctly.\n\nCurriculum Context:\n{{curriculum_context}}\n\nFocus on key vocabulary terms related to the topic and provide scaffolds for using them in context.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the vocabulary-focused activity\n- description: 2-3 sentences about using academic language\n- steps: An array of 3-4 steps for practicing vocabulary in context\n- supporting_question: A question that encourages use of target vocabulary\n- target_words: An array of 4-6 key vocabulary words students should use\n- sentence_starters: An array of sentence starters that incorporate target vocabulary\n\nMake it suitable for {{grade}} level language development and {{curriculum}} requirements.",
+      "target_words": [],
+      "sentence_starters": [
+        "Using the term [vocabulary word]...",
+        "In scientific terms, this is called...",
+        "The key vocabulary that describes this is..."
+      ]
+    },
+    "Exemplify": {
+      "template": "Create a SayIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Exemplify' to help students provide concrete examples of concepts.\n\nCurriculum Context:\n{{curriculum_context}}\n\nEncourage students to give specific examples that illustrate their understanding.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the example-giving activity\n- description: 2-3 sentences about providing examples and illustrations\n- steps: An array of 3-4 steps for finding and sharing examples\n- supporting_question: A question that asks for specific examples\n- sentence_starters: An array of sentence starters that help students provide examples\n\nEnsure it's appropriate for {{grade}} level and follows {{curriculum}} standards.",
+      "sentence_starters": [
+        "A good example of this is...",
+        "For instance, we can see this when...",
+        "This is demonstrated by..."
+      ]
+    }
+  },
+  
+  "BuildIt": {
+    "Hypothesise": {
+      "template": "Create a BuildIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Hypothesise' to help students make predictions and test ideas.\n\nCurriculum Context:\n{{curriculum_context}}\n\nDesign a hands-on activity where students can form hypotheses and explore outcomes.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the hypothesis-building activity\n- description: 2-3 sentences about forming and testing predictions\n- steps: An array of 4-5 practical steps for the hands-on activity\n- supporting_question: A question that encourages predictive thinking\n- materials: An array of simple materials needed for the activity\n\nEnsure the activity is safe, practical, and appropriate for {{grade}} level capabilities.",
+      "materials": []
+    },
+    "Combine": {
+      "template": "Create a BuildIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Combine' to help students merge different ideas or elements into something new.\n\nCurriculum Context:\n{{curriculum_context}}\n\nDesign a creative, hands-on activity where students physically or conceptually combine elements.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the combination activity\n- description: 2-3 sentences about merging or creating something new\n- steps: An array of 4-5 practical steps for the building/creating process\n- supporting_question: A question that encourages creative combination\n- materials: An array of simple materials or resources needed\n\nMake it developmentally appropriate for {{grade}} level and aligned with {{curriculum}} standards.",
+      "materials": []
+    },
+    "Judge": {
+      "template": "Create a BuildIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Judge' to help students evaluate options and make decisions.\n\nCurriculum Context:\n{{curriculum_context}}\n\nDesign an activity where students create criteria, evaluate options, and make justified decisions.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the decision-making activity\n- description: 2-3 sentences about evaluating and choosing\n- steps: An array of 4-5 steps for the evaluation and decision process\n- supporting_question: A question that requires students to make and justify a choice\n- criteria: An array of 3-4 criteria students should consider when judging\n- materials: An array of simple materials needed (if applicable)\n\nEnsure it's appropriate for {{grade}} level critical thinking skills and {{curriculum}} expectations.",
+      "criteria": [],
+      "materials": []
+    },
+    "Imagine": {
+      "template": "Create a BuildIt activity for {{grade}} students learning about {{topic}} in {{subject}}.\n\nUse the thinking skill 'Imagine' to help students create something new and innovative.\n\nCurriculum Context:\n{{curriculum_context}}\n\nDesign a creative building activity that encourages imagination and innovation.\n\nReturn a JSON response with:\n- title: A clear, engaging title for the imaginative creation activity\n- description: 2-3 sentences about creating something new and original\n- steps: An array of 4-5 practical steps for the creative building process\n- supporting_question: A question that sparks creative and imaginative thinking\n- materials: An array of open-ended materials that support creativity\n\nMake it suitable for {{grade}} level creativity and aligned with {{curriculum}} standards.",
+      "materials": []
+    }
+  }
+}

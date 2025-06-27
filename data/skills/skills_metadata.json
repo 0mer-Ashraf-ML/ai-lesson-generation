@@ -1,0 +1,286 @@
+{
+  "Green": {
+    "category": "Getting Started",
+    "description": "Initial engagement, prior knowledge activation",
+    "usage": "Lesson opening, knowledge retrieval, foundation setting",
+    "cognitive_purpose": "Activate prior knowledge and establish learning foundations",
+    "skills": [
+      {
+        "skill": "Identify",
+        "example_question": "What do we need to know before we start?",
+        "block_type": "MapIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/green_identify.svg",
+        "description": "Recognise and name specific elements",
+        "framework_guidance": {
+          "key_principle": "Help students recognize and name key elements before deeper exploration",
+          "teacher_instructions": [
+            "Present materials or information for students to examine",
+            "Ask students to point out or name what they notice",
+            "Encourage detailed observation without judgment",
+            "Build vocabulary through identification activities"
+          ],
+          "student_scaffolds": [
+            "I can see...",
+            "I notice that...",
+            "This looks like..."
+          ],
+          "common_mistakes": [
+            "Moving too quickly past the identification stage",
+            "Not giving students enough time to observe",
+            "Accepting vague descriptions instead of specific identification"
+          ]
+        },
+        "subject_applications": {
+          "Science": {
+            "examples": ["Identify parts of a plant", "Name states of matter", "Recognize different forces"],
+            "key_vocabulary": ["observe", "recognize", "distinguish", "classify"],
+            "assessment_focus": "Can students accurately identify and name scientific concepts?"
+          },
+          "Mathematics": {
+            "examples": ["Identify shapes", "Recognize number patterns", "Name mathematical operations"],
+            "key_vocabulary": ["recognize", "distinguish", "classify", "sort"],
+            "assessment_focus": "Can students identify mathematical concepts and relationships?"
+          }
+        },
+        "difficulty_levels": {
+          "foundational": {
+            "description": "Identify obvious, familiar elements",
+            "example": "Point to the red objects in the classroom",
+            "scaffold_level": "High - provide clear examples"
+          },
+          "developing": {
+            "description": "Identify elements with some abstraction",
+            "example": "Identify living and non-living things in a nature photo",
+            "scaffold_level": "Medium - provide categories"
+          },
+          "proficient": {
+            "description": "Identify subtle or complex elements",
+            "example": "Identify bias in a historical source",
+            "scaffold_level": "Low - students work independently"
+          }
+        }
+      },
+      {
+        "skill": "Retrieve",
+        "example_question": "What did we learn last time that might help us now?",
+        "block_type": "MapIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/green_retrieve.svg",
+        "description": "Get information from memory",
+        "framework_guidance": {
+          "key_principle": "Activate prior knowledge to build connections with new learning",
+          "teacher_instructions": [
+            "Create connections to previous lessons or experiences",
+            "Use prompts that help students access their memory",
+            "Allow think time for memory retrieval",
+            "Validate and build upon what students remember"
+          ],
+          "student_scaffolds": [
+            "I remember when we...",
+            "This reminds me of...",
+            "We learned that..."
+          ]
+        }
+      }
+    ]
+  },
+  "Blue": {
+    "category": "Organizing Ideas", 
+    "description": "Structuring information, making connections",
+    "usage": "During exploration, when students need to sort/compare information",
+    "cognitive_purpose": "Help students organize their thinking and make connections between ideas",
+    "skills": [
+      {
+        "skill": "Categorise",
+        "example_question": "How can we group these things?",
+        "block_type": "MapIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/blue_categorise.svg",
+        "description": "Sort items into groups based on shared characteristics",
+        "media_suggestion": "sorting-template.png",
+        "framework_guidance": {
+          "key_principle": "Provide clear criteria for grouping and allow students to explain their reasoning",
+          "teacher_instructions": [
+            "Give students items to sort (physical or conceptual)",
+            "Ask them to create their own categories first",
+            "Have students explain WHY they grouped items together", 
+            "Discuss multiple valid ways to categorize the same items"
+          ],
+          "student_scaffolds": [
+            "These belong together because...",
+            "I put this in this group since...",
+            "Another way to sort these would be..."
+          ],
+          "common_mistakes": [
+            "Not explaining the sorting criteria",
+            "Creating too many single-item categories",
+            "Focusing on surface features rather than meaningful connections"
+          ]
+        },
+        "subject_applications": {
+          "Science": {
+            "examples": ["Classify materials by properties", "Sort animals by habitat", "Group forces by type"],
+            "key_vocabulary": ["properties", "classification", "characteristics", "criteria"],
+            "assessment_focus": "Can students identify scientific classification criteria?"
+          },
+          "Mathematics": {
+            "examples": ["Sort shapes by properties", "Group numbers by patterns", "Classify data types"],
+            "key_vocabulary": ["attributes", "sets", "criteria", "systematic"],
+            "assessment_focus": "Can students use mathematical properties for grouping?"
+          }
+        },
+        "difficulty_levels": {
+          "foundational": {
+            "description": "Sort concrete, familiar items with obvious differences",
+            "example": "Sort classroom objects by color or size",
+            "scaffold_level": "High - provide categories"
+          },
+          "developing": {
+            "description": "Sort items with multiple valid groupings",
+            "example": "Sort animals by multiple characteristics",
+            "scaffold_level": "Medium - suggest possible categories"
+          },
+          "proficient": {
+            "description": "Create own classification system with sub-categories",
+            "example": "Develop a classification system for school subjects",
+            "scaffold_level": "Low - students create own criteria"
+          }
+        }
+      },
+      {
+        "skill": "Compare",
+        "example_question": "How are these two things the same?",
+        "block_type": "MapIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/blue_compare.svg",
+        "description": "Identify similarities and differences",
+        "media_suggestion": "venn-diagram.png",
+        "framework_guidance": {
+          "key_principle": "Focus on both similarities AND differences to deepen understanding",
+          "teacher_instructions": [
+            "Provide two or more items/concepts to compare",
+            "Ask for both similarities and differences",
+            "Use graphic organizers to structure the comparison",
+            "Discuss which similarities/differences are most significant"
+          ],
+          "student_scaffolds": [
+            "Both of these...",
+            "One difference is...",
+            "They are similar because...",
+            "However, they differ in..."
+          ]
+        }
+      }
+    ]
+  },
+  "Yellow": {
+    "category": "Critical Thinking",
+    "description": "Deep analysis, evidence-based reasoning", 
+    "usage": "Mid-lesson comprehension checks, when students need to justify thinking",
+    "cognitive_purpose": "Develop analytical thinking and evidence-based reasoning",
+    "skills": [
+      {
+        "skill": "Explain",
+        "example_question": "Can you explain what's happening here?",
+        "block_type": "SayIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/yellow_explain.svg",
+        "description": "Communicate the essentials clearly",
+        "framework_guidance": {
+          "key_principle": "Support clear communication of understanding with appropriate detail",
+          "teacher_instructions": [
+            "Ask open-ended questions that require explanation",
+            "Provide sentence starters to support explanation",
+            "Encourage students to include evidence in their explanations",
+            "Model clear explanation techniques"
+          ],
+          "student_scaffolds": [
+            "This happens because...",
+            "The reason is...",
+            "I can explain this by...",
+            "This shows that..."
+          ]
+        }
+      },
+      {
+        "skill": "Validate",
+        "example_question": "What evidence do you have to support this?",
+        "block_type": "SayIt", 
+        "icon_url": "https://cdn.structural-learning.com/icons/yellow_validate.svg",
+        "description": "Provide evidence to support claims",
+        "framework_guidance": {
+          "key_principle": "Require students to back up their thinking with evidence",
+          "student_scaffolds": [
+            "I know this because...",
+            "The evidence shows...",
+            "This is supported by..."
+          ]
+        }
+      }
+    ]
+  },
+  "Orange": {
+    "category": "Communicating Understanding",
+    "description": "Language development, vocabulary building",
+    "usage": "When focus is on precise expression and academic language",
+    "cognitive_purpose": "Develop academic language and precise communication skills",
+    "skills": [
+      {
+        "skill": "Target Vocabulary",
+        "example_question": "Can you use this new word in a sentence?",
+        "block_type": "SayIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/orange_vocabulary.svg",
+        "description": "Incorporate new terminology accurately",
+        "framework_guidance": {
+          "key_principle": "Develop academic vocabulary through meaningful use in context",
+          "teacher_instructions": [
+            "Introduce key vocabulary explicitly",
+            "Provide multiple opportunities to use new words",
+            "Connect vocabulary to concepts being learned",
+            "Encourage precise word choice"
+          ]
+        }
+      }
+    ]
+  },
+  "Red": {
+    "category": "Applying Knowledge",
+    "description": "Creative application, synthesis, evaluation",
+    "usage": "End of lesson, assessment, when students have solid foundation", 
+    "cognitive_purpose": "Apply learning creatively and evaluate ideas critically",
+    "skills": [
+      {
+        "skill": "Hypothesise",
+        "example_question": "What do you think will happen if we try this?",
+        "block_type": "BuildIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/red_hypothesise.svg",
+        "description": "Make predictions based on understanding",
+        "framework_guidance": {
+          "key_principle": "Encourage evidence-based predictions that can be tested",
+          "teacher_instructions": [
+            "Present scenarios for prediction",
+            "Ask students to explain their reasoning",
+            "Provide opportunities to test hypotheses",
+            "Discuss outcomes and refine thinking"
+          ],
+          "student_scaffolds": [
+            "I predict that...",
+            "Based on what I know...",
+            "I think this will happen because..."
+          ]
+        }
+      },
+      {
+        "skill": "Judge",
+        "example_question": "Which one do you think is the best?",
+        "block_type": "BuildIt",
+        "icon_url": "https://cdn.structural-learning.com/icons/red_judge.svg", 
+        "description": "Form opinions and make decisions with justification",
+        "framework_guidance": {
+          "key_principle": "Require clear criteria and evidence for judgments",
+          "student_scaffolds": [
+            "I think this is better because...",
+            "Based on these criteria...",
+            "The evidence suggests..."
+          ]
+        }
+      }
+    ]
+  }
+}

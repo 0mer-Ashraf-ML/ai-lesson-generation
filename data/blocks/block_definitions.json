@@ -1,0 +1,79 @@
+{
+  "MapIt": {
+    "definition": "REPLACE: Visual thinking activities using graphic organizers - add your real definition here",
+    "purpose": "REPLACE: Add the real purpose of MapIt from Structural Learning framework",
+    "methodology": "REPLACE: Add the actual methodology",
+    "key_principles": [
+      "REPLACE: Add real MapIt principles from your framework",
+      "REPLACE: These are placeholders"
+    ],
+    "graphic_organizers": {
+      "Venn Diagram": {
+        "use_case": "REPLACE: Add real use case",
+        "skills": ["Compare", "Categorise"],
+        "description": "REPLACE: Add real description from your materials"
+      },
+      "Mind Map": {
+        "use_case": "REPLACE: Add real use case", 
+        "skills": ["Connect", "Retrieve", "Elaborate"],
+        "description": "REPLACE: Add real description"
+      },
+      "Flow Chart": {
+        "use_case": "REPLACE: Add real use case",
+        "skills": ["Sequence", "Connect"],
+        "description": "REPLACE: Add real description"
+      },
+      "Tree Diagram": {
+        "use_case": "REPLACE: Add real use case",
+        "skills": ["Categorise", "Rank"],
+        "description": "REPLACE: Add real description"
+      }
+    },
+    "implementation_guidance": [
+      "REPLACE: Add real implementation guidance from your framework"
+    ]
+  },
+  
+  "SayIt": {
+    "definition": "REPLACE: Add real SayIt definition from Structural Learning",
+    "purpose": "REPLACE: Add real purpose",
+    "methodology": "REPLACE: Add real methodology", 
+    "key_principles": [
+      "REPLACE: Add real SayIt principles"
+    ],
+    "talk_formats": {
+      "Talk Tactics": {
+        "use_case": "REPLACE: Add real use case from your Talk Tactics materials",
+        "roles": ["REPLACE: Add real roles from your framework"],
+        "description": "REPLACE: Add real description"
+      }
+    },
+    "sentence_starters": {
+      "Explain": ["REPLACE: Add real sentence starters from your materials"],
+      "Validate": ["REPLACE: Add real sentence starters"],
+      "Challenge": ["REPLACE: Add real sentence starters"]
+    },
+    "implementation_guidance": [
+      "REPLACE: Add real implementation guidance"
+    ]
+  },
+  
+  "BuildIt": {
+    "definition": "REPLACE: Add real BuildIt definition from Structural Learning",
+    "purpose": "REPLACE: Add real purpose",
+    "methodology": "REPLACE: Add real methodology",
+    "key_principles": [
+      "REPLACE: Add real BuildIt principles"
+    ],
+    "construction_types": {
+      "REPLACE": {
+        "use_case": "REPLACE: Add real construction types from your framework",
+        "examples": ["REPLACE: Add real examples"],
+        "materials": ["REPLACE: Add real materials"]
+      }
+    },
+    "implementation_guidance": [
+      "REPLACE: Add real implementation guidance"
+    ]
+  }
+}
