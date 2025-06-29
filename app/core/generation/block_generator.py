@@ -7,6 +7,7 @@ from app.core.generation.llm_client import llm_service
 from app.core.rag.context_builder import rag_context_builder
 from app.utils.exceptions import LLMGenerationError, ValidationError
 from app.utils.logging import get_logger
+from app.core.rag.scaffold_retriever import scaffold_retriever
 
 logger = get_logger(__name__)
 
@@ -20,11 +21,11 @@ class BlockGenerator:
         self.rag_builder = rag_context_builder
     
     async def generate_block(
-        self,
-        skill: SkillSpec,
-        context: GenerationContext,
-        sequence_order: int = 0
-    ) -> LessonBlock:
+    self,
+    skill: SkillSpec,
+    context: GenerationContext,
+    sequence_order: int = 0
+) -> LessonBlock:
         """
         Generate a complete lesson block for a given skill
         
@@ -34,7 +35,7 @@ class BlockGenerator:
             sequence_order: Position in the lesson sequence
             
         Returns:
-            Complete LessonBlock object
+            Complete LessonBlock object with resources
         """
         try:
             logger.info(
@@ -44,41 +45,58 @@ class BlockGenerator:
                 topic=context.topic
             )
             
-            # Step 1: Build RAG-enhanced context for this specific block
+            # NEW: Retrieve scaffold resources
+            scaffold_resources = await scaffold_retriever.retrieve_scaffold_resources(
+                scaffold_type=skill.block_type,
+                skill_name=skill.name,
+                topic=context.topic,
+                top_k=2  # Limit to 2 PDF resources
+            )
+            
+            # Build RAG-enhanced context for this specific block
             rag_context = await self.rag_builder.build_block_context(skill, context)
             
-            # Step 2: Build the generation prompt
+            # Add resource hints to the context
+            if scaffold_resources["pdfs"]:
+                resource_hints = "\n\nAvailable resources for this activity:\n"
+                for pdf in scaffold_resources["pdfs"]:
+                    resource_hints += f"- {pdf['name']}: {pdf['content_preview'][:100]}...\n"
+                rag_context += resource_hints
+            
+            # Build the generation prompt
             prompt = self.prompt_builder.build_block_prompt(
                 skill=skill,
                 context=context,
                 rag_context=rag_context
             )
             
-            # Step 3: Determine generation complexity
+            # Determine generation complexity
             complexity = self._determine_complexity(context.difficulty, skill.color)
             
-            # Step 4: Generate content using LLM
+            # Generate content using LLM
             llm_result = await self.llm_service.generate_lesson_block(
                 prompt=prompt,
                 complexity=complexity
             )
             
-            # Step 5: Extract and validate the generated content
+            # Extract and validate the generated content
             generated_content = llm_result['content']
             self._validate_generated_content(generated_content, skill.block_type)
             
-            # Step 6: Build complete LessonBlock object
-            lesson_block = self._build_lesson_block(
+            # Build complete LessonBlock object with resources
+            lesson_block = self._build_enhanced_lesson_block(
                 generated_content=generated_content,
                 skill=skill,
-                llm_metadata=llm_result
+                llm_metadata=llm_result,
+                scaffold_resources=scaffold_resources
             )
             
             logger.info(
                 "Block generated successfully",
                 block_id=lesson_block.id,
                 skill=skill.name,
-                tokens_used=llm_result.get('usage', {}).get('total_tokens', 0)
+                tokens_used=llm_result.get('usage', {}).get('total_tokens', 0),
+                resources_attached=len(lesson_block.resources) if hasattr(lesson_block, "resources") else 0
             )
             
             return lesson_block
@@ -91,6 +109,91 @@ class BlockGenerator:
                 topic=context.topic
             )
             raise LLMGenerationError(f"Failed to generate block for {skill.name}: {str(e)}")
+        
+        # Add this new method to build enhanced blocks with resources
+    def _build_enhanced_lesson_block(
+        self,
+        generated_content: Dict[str, Any],
+        skill: SkillSpec,
+        llm_metadata: Dict[str, Any],
+        scaffold_resources: Dict[str, Any]
+    ) -> LessonBlock:
+            """Build a complete LessonBlock object with scaffold resources"""
+            
+            # Create skill metadata
+            skill_metadata = SkillMetadata(
+                name=skill.name,
+                color=skill.color,
+                icon_url=skill.icon_url,
+                category=self._get_category_name(skill.color)
+            )
+            
+            # Create block ID
+            block_id = f"block-{str(uuid.uuid4())[:8]}"
+            
+            # Build media URLs list
+            media = []
+            
+            # Add scaffold image if available
+            if scaffold_resources.get("image"):
+                media.append(scaffold_resources["image"])
+            # Fall back to default media suggestion
+            elif skill.media_suggestion:
+                media.append(f"https://cdn.structural-learning.com/templates/{skill.media_suggestion}")
+            
+            # Create the lesson block
+            lesson_block = LessonBlock(
+                id=block_id,
+                type=skill.block_type,
+                title=generated_content['title'].strip(),
+                description=generated_content['description'].strip(),
+                steps=[step.strip() for step in generated_content['steps']],
+                skill=skill_metadata,
+                supporting_question=generated_content['supporting_question'].strip(),
+                media=media
+            )
+            
+            # Add optional fields based on block type
+            if 'sentence_starters' in generated_content:
+                lesson_block.sentence_starters = generated_content['sentence_starters']
+            
+            if 'materials' in generated_content:
+                lesson_block.materials = generated_content['materials']
+            
+            if 'target_words' in generated_content:
+                lesson_block.target_words = generated_content['target_words']
+            
+            if 'criteria' in generated_content:
+                lesson_block.criteria = generated_content['criteria']
+            
+            # Add resource links
+            from app.models.responses import ResourceLink
+            
+            resource_links = []
+            
+            # Add PDF resources
+            for pdf in scaffold_resources.get("pdfs", []):
+                resource_links.append(ResourceLink(
+                    type="pdf",
+                    name=pdf.get("name", "Resource"),
+                    description=f"{skill.block_type} resource for {skill.name}",
+                    url=pdf.get("url", "")
+                ))
+            
+            # Add video resource if available
+            if scaffold_resources.get("video"):
+                resource_links.append(ResourceLink(
+                    type="video",
+                    name=f"{skill.name} {skill.block_type} Tutorial",
+                    description=f"How to implement {skill.name} thinking skill",
+                    url=scaffold_resources.get("video")
+                ))
+            
+            # Set resources on the block
+            lesson_block.resources = resource_links
+            
+            return lesson_block
+
     
     def _determine_complexity(self, difficulty: float, skill_color: str) -> str:
         """Determine generation complexity based on difficulty and skill color"""
@@ -217,7 +320,6 @@ class BlockGenerator:
                 raise
         
         return blocks
-
 
 # Global instance
 block_generator = BlockGenerator()

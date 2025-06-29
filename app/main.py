@@ -15,6 +15,8 @@ from app.utils.exceptions import (
     DatabaseError,
     EmbeddingError
 )
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 # Import routers
 from app.api.routes import lesson, health
@@ -62,6 +64,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+data_dir = Path(__file__).parent.parent / "data"
+if data_dir.exists():
+    app.mount("/resources", StaticFiles(directory=str(data_dir)), name="resources")
+    logger.info(f"Mounted static file server at /resources -> {data_dir}")
+else:
+    logger.warning(f"Data directory not found at {data_dir}, static resources will not be available")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,

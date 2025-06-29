@@ -24,6 +24,12 @@ class SkillMetadata(BaseModel):
     icon_url: str
     category: str
 
+class ResourceLink(BaseModel):
+    """Link to a supporting resource"""
+    type: str  # "pdf", "video", "image"
+    name: str
+    description: Optional[str] = None
+    url: str
 
 class LessonBlock(BaseModel):
     id: str
@@ -38,6 +44,7 @@ class LessonBlock(BaseModel):
     materials: Optional[List[str]] = []
     target_words: Optional[List[str]] = []
     criteria: Optional[List[str]] = []
+    resources: Optional[List[ResourceLink]] = []
 
 
 class LessonMetadata(BaseModel):
@@ -69,3 +76,5 @@ class ErrorResponse(BaseModel):
     error: str
     message: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
+    
+

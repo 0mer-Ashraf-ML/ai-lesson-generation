@@ -10,7 +10,8 @@ from app.core.rag.context_builder import rag_context_builder
 from app.services.storage_service import storage_service
 from app.utils.exceptions import SkillSelectionError, LLMGenerationError
 from app.utils.logging import get_logger
-
+import random
+import time
 logger = get_logger(__name__)
 
 
@@ -39,7 +40,8 @@ class LessonService:
             Complete lesson response with generated blocks
         """
         try:
-            lesson_id = f"lesson-{str(uuid.uuid4())}"
+            # lesson_id = f"lesson-{str(uuid.uuid4())}"
+            lesson_id = str(int(time.time() * 1000))  # Timestamp-based numeric ID
             
             logger.info(
                 "Starting lesson generation",
@@ -49,7 +51,18 @@ class LessonService:
                 subject=request.subject
             )
             
-            # Step 1: Select appropriate thinking skills
+            preferred_scaffolds = request.preferred_blocks
+            # If no preferences provided, generate a varied sequence
+            if not preferred_scaffolds:
+                preferred_scaffolds = self._generate_varied_scaffold_sequence(
+                    step_count=request.step_count,
+                    difficulty=request.difficulty
+                )
+                logger.info(f"Auto-generated scaffold sequence: {preferred_scaffolds}")
+            else:
+                logger.info(f"Using teacher-specified scaffolds: {preferred_scaffolds}")
+        
+            # Step 2: Select appropriate thinking skills
             selected_skills = self.skill_selector.select_skills_for_lesson(
                 difficulty=request.difficulty,
                 step_count=request.step_count,
@@ -57,7 +70,7 @@ class LessonService:
                 subject=request.subject
             )
             
-            # Step 2: Build generation context with RAG
+            # Step 3: Build generation context with RAG
             generation_context = await self.rag_builder.build_lesson_context(
                 topic=request.topic,
                 subject=request.subject,
@@ -67,20 +80,20 @@ class LessonService:
             )
             generation_context.difficulty = request.difficulty
             
-            # Step 3: Generate lesson blocks
+            # Step 4: Generate lesson blocks
             lesson_blocks = await self.block_generator.generate_multiple_blocks(
                 skills=selected_skills,
                 context=generation_context
             )
             
-            # Step 4: Create lesson metadata
+            # Step 5: Create lesson metadata
             lesson_metadata = self._create_lesson_metadata(
                 skills=selected_skills,
                 difficulty=request.difficulty,
                 step_count=request.step_count
             )
             
-            # Step 5: Save lesson if user provided
+            # Step 6: Save lesson if user provided
             if user_id:
                 await self._save_lesson_plan(
                     lesson_id=lesson_id,
@@ -90,7 +103,7 @@ class LessonService:
                     user_id=user_id
                 )
             
-            # Step 6: Create response
+            # Step 7: Create response
             lesson_response = LessonResponse(
                 lesson_id=lesson_id,
                 topic=request.topic,
@@ -120,6 +133,47 @@ class LessonService:
         except Exception as e:
             logger.error("Unexpected error in lesson generation", error=str(e))
             raise
+        
+    def _generate_varied_scaffold_sequence(self, step_count: int, difficulty: float) -> List[str]:
+        """Generate a varied sequence of scaffold types"""
+        scaffolds = []
+        
+        # Always start with MapIt for organization
+        if step_count >= 1:
+            scaffolds.append("MapIt")
+        
+        # Add SayIt for explanation/discussion
+        if step_count >= 2:
+            scaffolds.append("SayIt")
+        
+        # For higher difficulty lessons with 3+ steps, add BuildIt
+        if step_count >= 3 and difficulty > 0.5:
+            scaffolds.append("BuildIt")
+        elif step_count >= 3:
+            # For easier lessons, alternate between MapIt and SayIt
+            scaffolds.append("MapIt" if scaffolds[-1] == "SayIt" else "SayIt")
+        
+        # Fill remaining steps with variety (avoid repetition)
+        while len(scaffolds) < step_count:
+            # Avoid three consecutive instances of the same type
+            if len(scaffolds) >= 2 and scaffolds[-1] == scaffolds[-2]:
+                options = [t for t in ["MapIt", "SayIt", "BuildIt"] if t != scaffolds[-1]]
+                scaffolds.append(random.choice(options))
+            else:
+                # Weighted selection - BuildIt less common for easier lessons
+                if difficulty < 0.4:
+                    weights = {"MapIt": 0.5, "SayIt": 0.4, "BuildIt": 0.1}
+                elif difficulty < 0.7:
+                    weights = {"MapIt": 0.4, "SayIt": 0.4, "BuildIt": 0.2}
+                else:
+                    weights = {"MapIt": 0.3, "SayIt": 0.3, "BuildIt": 0.4}
+                
+                options = list(weights.keys())
+                weights_list = [weights[opt] for opt in options]
+                
+                scaffolds.append(random.choices(options, weights=weights_list)[0])
+        
+        return scaffolds
     
     async def get_lesson(self, lesson_id: str, user_id: Optional[str] = None) -> Optional[LessonResponse]:
         """Retrieve a saved lesson by ID"""
