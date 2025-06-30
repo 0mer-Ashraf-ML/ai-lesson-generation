@@ -1,10 +1,10 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 import uuid
 from datetime import datetime
 from app.models.requests import LessonRequest
 from app.models.responses import LessonResponse, LessonMetadata
 from app.models.lesson import LessonPlan, GenerationContext
-from app.core.skills.selector import skill_selector
+from app.core.skills.rag_enhanced_selector import rag_enhanced_skill_selector  # Use RAG selector
 from app.core.generation.block_generator import block_generator
 from app.core.rag.context_builder import rag_context_builder
 from app.services.storage_service import storage_service
@@ -12,14 +12,15 @@ from app.utils.exceptions import SkillSelectionError, LLMGenerationError
 from app.utils.logging import get_logger
 import random
 import time
+
 logger = get_logger(__name__)
 
 
 class LessonService:
-    """Main service for lesson generation and management"""
+    """Main service for lesson generation and management with RAG-enhanced skill selection"""
     
     def __init__(self):
-        self.skill_selector = skill_selector
+        self.skill_selector = rag_enhanced_skill_selector  # NEW: Use RAG-enhanced selector
         self.block_generator = block_generator
         self.rag_builder = rag_context_builder
         self.storage_service = storage_service
@@ -30,7 +31,7 @@ class LessonService:
         user_id: Optional[str] = None
     ) -> LessonResponse:
         """
-        Generate a complete lesson plan
+        Generate a complete lesson plan using RAG-discovered skills
         
         Args:
             request: Lesson generation request
@@ -40,19 +41,18 @@ class LessonService:
             Complete lesson response with generated blocks
         """
         try:
-            # lesson_id = f"lesson-{str(uuid.uuid4())}"
             lesson_id = str(int(time.time() * 1000))  # Timestamp-based numeric ID
             
             logger.info(
-                "Starting lesson generation",
+                "Starting RAG-enhanced lesson generation",
                 lesson_id=lesson_id,
                 topic=request.topic,
                 grade=request.grade,
                 subject=request.subject
             )
             
+            # Step 1: Generate varied scaffold sequence if not provided
             preferred_scaffolds = request.preferred_blocks
-            # If no preferences provided, generate a varied sequence
             if not preferred_scaffolds:
                 preferred_scaffolds = self._generate_varied_scaffold_sequence(
                     step_count=request.step_count,
@@ -62,12 +62,18 @@ class LessonService:
             else:
                 logger.info(f"Using teacher-specified scaffolds: {preferred_scaffolds}")
         
-            # Step 2: Select appropriate thinking skills
-            selected_skills = self.skill_selector.select_skills_for_lesson(
+            # Step 2: Select skills using RAG system (NEW: Enhanced with actual resource discovery)
+            selected_skills = await self.skill_selector.select_skills_for_lesson(
                 difficulty=request.difficulty,
                 step_count=request.step_count,
-                preferred_blocks=request.preferred_blocks,
-                subject=request.subject
+                subject=request.subject,
+                topic=request.topic,
+                preferred_blocks=request.preferred_blocks
+            )
+            logger.info(
+                "Skills selected from RAG",
+                skills=[skill.name for skill in selected_skills],
+                block_types=[skill.block_type for skill in selected_skills]
             )
             
             # Step 3: Build generation context with RAG
@@ -86,11 +92,12 @@ class LessonService:
                 context=generation_context
             )
             
-            # Step 5: Create lesson metadata
-            lesson_metadata = self._create_lesson_metadata(
+            # Step 5: Create enhanced lesson metadata
+            lesson_metadata = self._create_enhanced_lesson_metadata(
                 skills=selected_skills,
                 difficulty=request.difficulty,
-                step_count=request.step_count
+                step_count=request.step_count,
+                rag_enhanced=True  # NEW: Flag for RAG enhancement
             )
             
             # Step 6: Save lesson if user provided
@@ -116,24 +123,25 @@ class LessonService:
             )
             
             logger.info(
-                "Lesson generation completed successfully",
+                "RAG-enhanced lesson generation completed successfully",
                 lesson_id=lesson_id,
                 blocks_generated=len(lesson_blocks),
-                skills_used=[skill.name for skill in selected_skills]
+                skills_used=[skill.name for skill in selected_skills],
+                resources_attached=sum(len(getattr(block, 'resources', [])) for block in lesson_blocks)
             )
             
             return lesson_response
             
         except SkillSelectionError as e:
-            logger.error("Skill selection failed", error=str(e))
+            logger.error("RAG skill selection failed", error=str(e))
             raise
         except LLMGenerationError as e:
             logger.error("Content generation failed", error=str(e))
             raise
         except Exception as e:
-            logger.error("Unexpected error in lesson generation", error=str(e))
+            logger.error("Unexpected error in RAG-enhanced lesson generation", error=str(e))
             raise
-        
+    
     def _generate_varied_scaffold_sequence(self, step_count: int, difficulty: float) -> List[str]:
         """Generate a varied sequence of scaffold types"""
         scaffolds = []
@@ -215,13 +223,14 @@ class LessonService:
             logger.error("Error retrieving user lessons", error=str(e), user_id=user_id)
             raise
     
-    def _create_lesson_metadata(
+    def _create_enhanced_lesson_metadata(
         self, 
         skills: List, 
         difficulty: float, 
-        step_count: int
+        step_count: int,
+        rag_enhanced: bool = False
     ) -> LessonMetadata:
-        """Create metadata for the lesson"""
+        """Create enhanced metadata for the lesson"""
         
         skills_used = [skill.name for skill in skills]
         cognitive_progression = [skill.color for skill in skills]
@@ -244,6 +253,10 @@ class LessonService:
                 difficulty_level = label
                 break
         
+        # Add RAG enhancement flag to difficulty level
+        if rag_enhanced:
+            difficulty_level += " (Resource-Enhanced)"
+        
         return LessonMetadata(
             skills_used=skills_used,
             cognitive_progression=cognitive_progression,
@@ -265,14 +278,18 @@ class LessonService:
         lesson_plan = LessonPlan(
             id=lesson_id,
             user_id=user_id,
-            title=f"{request.topic} - {request.grade} {request.subject}",
+            title=f"{request.topic} - {request.grade} {request.subject} (RAG-Enhanced)",
             topic=request.topic,
             grade=request.grade,
             subject=request.subject,
             curriculum=request.curriculum,
             difficulty=request.difficulty,
             blocks=[block.dict() for block in blocks],  # Convert to dict for JSON storage
-            metadata=metadata.dict()
+            metadata={
+                **metadata.dict(),
+                "rag_enhanced": True,
+                "skill_source": "rag_discovery"
+            }
         )
         
         # Save to storage
@@ -299,7 +316,6 @@ class LessonService:
             metadata=metadata,
             generated_at=lesson_plan.created_at
         )
-
 
 # Global instance
 lesson_service = LessonService()
