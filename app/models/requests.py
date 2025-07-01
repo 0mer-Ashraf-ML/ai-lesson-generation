@@ -22,8 +22,8 @@ class LessonRequest(BaseModel):
     )
     step_count: int = Field(
         default=3, 
-        ge=2, 
-        le=5, 
+        ge=1, 
+        le=10, 
         description="Number of blocks to generate"
     )
     preferred_blocks: Optional[List[BlockType]] = Field(
