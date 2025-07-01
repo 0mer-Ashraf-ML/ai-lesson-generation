@@ -16,6 +16,7 @@ class BlockType(str, Enum):
     MAP_IT = "MapIt"
     SAY_IT = "SayIt"
     BUILD_IT = "BuildIt"
+    PROMPT = "Prompt"  # NEW: Simple prompt instead of full scaffold
 
 
 class SkillMetadata(BaseModel):
@@ -45,6 +46,11 @@ class LessonBlock(BaseModel):
     target_words: Optional[List[str]] = []
     criteria: Optional[List[str]] = []
     resources: Optional[List[ResourceLink]] = []
+    
+    # NEW: Fields for prompt-type blocks
+    interaction_type: Optional[str] = None  # "think_pair_share", "whole_class", etc.
+    follow_up_questions: Optional[List[str]] = []
+    success_indicators: Optional[List[str]] = []
 
 
 class LessonMetadata(BaseModel):

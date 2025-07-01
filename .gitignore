@@ -4,3 +4,5 @@ data/mapit-data/
 data/sayit-data/
 data/test_output/
 __pycache__/
+data/skill-cards
+**/.DS_Store
