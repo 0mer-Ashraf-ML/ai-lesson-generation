@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from app.models.requests import LessonRequest
 from app.models.responses import LessonResponse, LessonMetadata
-from app.models.lesson import LessonPlan, GenerationContext
+from app.models.lesson import LessonPlan, GenerationContext, SkillSpec
 
 # Import enhanced components
 from app.core.skills.enhanced_selector import enhanced_skill_selector
@@ -11,8 +11,8 @@ from app.core.generation.enhanced_prompt_builder import enhanced_prompt_builder
 from app.core.generation.block_generator import block_generator
 from app.core.rag.context_builder import rag_context_builder
 from app.services.storage_service import storage_service
-
-from app.utils.exceptions import SkillSelectionError, LLMGenerationError
+import time
+import random
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -31,73 +31,225 @@ class EnhancedLessonService:
         # Update block generator to use enhanced prompt builder
         self.block_generator.prompt_builder = enhanced_prompt_builder
     
+    def verify_skill_metadata(self, skill: SkillSpec) -> SkillSpec:
+        """
+        Verify and correct skill metadata against the enhanced_skills_metadata file
+        
+        Args:
+            skill: The skill to verify
+            
+        Returns:
+            SkillSpec with corrected color and block_type if needed
+        """
+        try:
+            # Import the enhanced metadata
+            from app.core.skills.enhanced_metadata import enhanced_skill_metadata
+            
+            # Look up the correct color and block_type for this skill
+            correct_color = None
+            correct_block_type = None
+            
+            # Check each color category
+            for color, color_data in enhanced_skill_metadata._skills_data.items():
+                # Look for the skill in this color
+                for skill_data in color_data.get("skills", []):
+                    if skill_data["skill"] == skill.name:
+                        correct_color = color
+                        correct_block_type = skill_data["block_type"]
+                        break
+                
+                if correct_color:
+                    break
+            
+            # If we found correct metadata, check if it matches
+            if correct_color and correct_block_type:
+                if skill.color != correct_color or skill.block_type != correct_block_type:
+                    logger.warning(
+                        f"Correcting skill metadata: {skill.name} should be {correct_color}/{correct_block_type}, "
+                        f"not {skill.color}/{skill.block_type}"
+                    )
+                    
+                    # Generate the correct icon URL
+                    icon_url = self._ensure_correct_icon_url(skill.name, correct_color)
+                    
+                    # Return a corrected SkillSpec
+                    return SkillSpec(
+                        name=skill.name,
+                        color=correct_color,
+                        block_type=correct_block_type,
+                        example_question=skill.example_question,
+                        description=skill.description,
+                        icon_url=icon_url,
+                        media_suggestion=skill.media_suggestion
+                    )
+            
+            # If no correction needed or metadata not found, return the original
+            return skill
+            
+        except Exception as e:
+            logger.error(f"Error verifying skill metadata for {skill.name}", error=str(e))
+            return skill
+        
+    def _generate_varied_scaffold_sequence(self, step_count: int, difficulty: float) -> List[str]:
+        """Generate a varied sequence of scaffold types"""
+        scaffolds = []
+        
+        # Always start with MapIt for organization
+        if step_count >= 1:
+            scaffolds.append("MapIt")
+        
+        # Add SayIt for explanation/discussion
+        if step_count >= 2:
+            scaffolds.append("SayIt")
+        
+        # For higher difficulty lessons with 3+ steps, add BuildIt
+        if step_count >= 3 and difficulty > 0.5:
+            scaffolds.append("BuildIt")
+        elif step_count >= 3:
+            # For easier lessons, alternate between MapIt and SayIt
+            scaffolds.append("MapIt" if scaffolds[-1] == "SayIt" else "SayIt")
+        
+        # Fill remaining steps with variety (avoid repetition)
+        while len(scaffolds) < step_count:
+            # Avoid three consecutive instances of the same type
+            if len(scaffolds) >= 2 and scaffolds[-1] == scaffolds[-2]:
+                options = [t for t in ["MapIt", "SayIt", "BuildIt"] if t != scaffolds[-1]]
+                scaffolds.append(random.choice(options))
+            else:
+                # Weighted selection - BuildIt less common for easier lessons
+                if difficulty < 0.4:
+                    weights = {"MapIt": 0.5, "SayIt": 0.4, "BuildIt": 0.1}
+                elif difficulty < 0.7:
+                    weights = {"MapIt": 0.4, "SayIt": 0.4, "BuildIt": 0.2}
+                else:
+                    weights = {"MapIt": 0.3, "SayIt": 0.3, "BuildIt": 0.4}
+                
+                options = list(weights.keys())
+                weights_list = [weights[opt] for opt in options]
+                
+                scaffolds.append(random.choices(options, weights=weights_list)[0])
+        
+        return scaffolds
+    
     async def generate_lesson(
         self, 
         request: LessonRequest, 
         user_id: Optional[str] = None
     ) -> LessonResponse:
         """
-        Generate a complete lesson plan using enhanced framework components
+        Generate a complete lesson plan with metadata verification
         
         Args:
             request: Lesson generation request
             user_id: Optional user ID for saving the lesson
             
         Returns:
-            Complete lesson response with framework-informed blocks
+            Complete lesson response with generated blocks
         """
         try:
-            lesson_id = f"lesson-{str(uuid.uuid4())}"
+            lesson_id = str(int(time.time() * 1000))  # Timestamp-based numeric ID
             
             logger.info(
-                "Starting enhanced lesson generation",
+                "Starting lesson generation",
                 lesson_id=lesson_id,
                 topic=request.topic,
                 grade=request.grade,
-                subject=request.subject,
-                difficulty=request.difficulty
+                subject=request.subject
             )
             
-            # Step 1: Enhanced skill selection with subject awareness
-            selected_skills = self.skill_selector.select_skills_for_lesson(
+            # Generate scaffold sequence if not provided
+            preferred_scaffolds = request.preferred_blocks
+            if not preferred_scaffolds:
+                preferred_scaffolds = self._generate_varied_scaffold_sequence(
+                    step_count=request.step_count,
+                    difficulty=request.difficulty
+                )
+                logger.info(f"Auto-generated scaffold sequence: {preferred_scaffolds}")
+            else:
+                logger.info(f"Using teacher-specified scaffolds: {preferred_scaffolds}")
+            
+            # Select skills
+            selected_skills = await self.skill_selector.select_skills_for_lesson(
                 difficulty=request.difficulty,
                 step_count=request.step_count,
                 subject=request.subject,
                 topic=request.topic,
-                preferred_blocks=request.preferred_blocks
+                preferred_blocks=preferred_scaffolds
             )
             
+            # Verify and correct skill metadata if needed
+            verified_skills = []
+            for skill in selected_skills:
+                # Add verification function to the skill selector if not already there
+                if hasattr(self.skill_selector, 'verify_skill_metadata'):
+                    verified_skill = self.skill_selector.verify_skill_metadata(skill)
+                else:
+                    # Import the verification function
+                    from app.core.skills.enhanced_metadata import enhanced_skill_metadata
+                    
+                    # Look up correct metadata
+                    verified_skill = skill
+                    for color, color_data in enhanced_skill_metadata._skills_data.items():
+                        for skill_data in color_data.get("skills", []):
+                            if skill_data["skill"] == skill.name:
+                                # If metadata doesn't match, create corrected skill
+                                if skill.color != color or skill.block_type != skill_data["block_type"]:
+                                    logger.warning(
+                                        f"Correcting skill metadata: {skill.name} should be {color}/{skill_data['block_type']}, "
+                                        f"not {skill.color}/{skill.block_type}"
+                                    )
+                                    
+                                    # Generate correct icon URL
+                                    icon_url = f"https://cdn.structural-learning.com/icons/{color.lower()}_{skill.name.lower().replace(' ', '_')}.svg"
+                                    
+                                    verified_skill = SkillSpec(
+                                        name=skill.name,
+                                        color=color,
+                                        block_type=skill_data["block_type"],
+                                        example_question=skill.example_question,
+                                        description=skill.description,
+                                        icon_url=icon_url,
+                                        media_suggestion=skill.media_suggestion
+                                    )
+                                break
+                        if verified_skill != skill:
+                            break
+                
+                verified_skills.append(verified_skill)
+            
+            # Log the verified skills
             logger.info(
-                "Skills selected with enhanced logic",
-                skills=[skill.name for skill in selected_skills],
-                colors=[skill.color for skill in selected_skills]
+                "Skills selected for lesson",
+                lesson_id=lesson_id,
+                scaffold_sequence=[skill.block_type for skill in verified_skills],
+                skills=verified_skills
             )
             
-            # Step 2: Build generation context with RAG
+            # Continue with normal lesson generation using verified skills
             generation_context = await self.rag_builder.build_lesson_context(
                 topic=request.topic,
                 subject=request.subject,
                 grade=request.grade,
                 curriculum=request.curriculum,
-                skills=selected_skills
+                skills=verified_skills
             )
             generation_context.difficulty = request.difficulty
             
-            # Step 3: Generate lesson blocks using enhanced framework guidance
-            lesson_blocks = await self._generate_enhanced_blocks(
-                skills=selected_skills,
+            # Generate blocks
+            lesson_blocks = await self.block_generator.generate_multiple_blocks(
+                skills=verified_skills,
                 context=generation_context
             )
             
-            # Step 4: Create enhanced lesson metadata
+            # Create metadata
             lesson_metadata = self._create_enhanced_lesson_metadata(
-                skills=selected_skills,
+                skills=verified_skills,
                 difficulty=request.difficulty,
                 step_count=request.step_count,
-                subject=request.subject
+                rag_enhanced=True
             )
             
-            # Step 5: Save lesson if user provided
+            # Save lesson if user provided
             if user_id:
                 await self._save_lesson_plan(
                     lesson_id=lesson_id,
@@ -107,7 +259,7 @@ class EnhancedLessonService:
                     user_id=user_id
                 )
             
-            # Step 6: Create response
+            # Create response
             lesson_response = LessonResponse(
                 lesson_id=lesson_id,
                 topic=request.topic,
@@ -120,24 +272,18 @@ class EnhancedLessonService:
             )
             
             logger.info(
-                "Enhanced lesson generation completed successfully",
+                "Lesson generation completed successfully",
                 lesson_id=lesson_id,
                 blocks_generated=len(lesson_blocks),
-                skills_used=[skill.name for skill in selected_skills],
-                framework_enhanced=True
+                skills_used=[skill.name for skill in verified_skills]
             )
             
             return lesson_response
-            
-        except SkillSelectionError as e:
-            logger.error("Enhanced skill selection failed", error=str(e))
-            raise
-        except LLMGenerationError as e:
-            logger.error("Enhanced content generation failed", error=str(e))
-            raise
+        
         except Exception as e:
-            logger.error("Unexpected error in enhanced lesson generation", error=str(e))
+            logger.error("Error in lesson generation", error=str(e))
             raise
+
     
     async def _generate_enhanced_blocks(
         self,

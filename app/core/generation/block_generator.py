@@ -20,14 +20,74 @@ class BlockGenerator:
         self.llm_service = llm_service
         self.rag_builder = rag_context_builder
     
-    async def generate_block(
-    self,
-    skill: SkillSpec,
-    context: GenerationContext,
-    sequence_order: int = 0
-) -> LessonBlock:
+    
+    def _verify_skill_metadata(self, skill: SkillSpec) -> SkillSpec:
         """
-        Generate a complete lesson block for a given skill
+        Verify and correct skill metadata against the enhanced_skills_metadata file
+        
+        Args:
+            skill: The skill to verify
+            
+        Returns:
+            SkillSpec with corrected color and block_type if needed
+        """
+        try:
+            # Import the enhanced metadata
+            from app.core.skills.enhanced_metadata import enhanced_skill_metadata
+            
+            # Look up the correct color and block_type for this skill
+            correct_color = None
+            correct_block_type = None
+            
+            # Check each color category
+            for color, color_data in enhanced_skill_metadata._skills_data.items():
+                # Look for the skill in this color
+                for skill_data in color_data.get("skills", []):
+                    if skill_data["skill"] == skill.name:
+                        correct_color = color
+                        correct_block_type = skill_data["block_type"]
+                        break
+                
+                if correct_color:
+                    break
+            
+            # If we found correct metadata, check if it matches
+            if correct_color and correct_block_type:
+                if skill.color != correct_color or skill.block_type != correct_block_type:
+                    logger.warning(
+                        f"Correcting skill metadata: {skill.name} should be {correct_color}/{correct_block_type}, "
+                        f"not {skill.color}/{skill.block_type}"
+                    )
+                    
+                    # Generate the correct icon URL
+                    icon_url = f"https://cdn.structural-learning.com/icons/{correct_color.lower()}_{skill.name.lower().replace(' ', '_')}.svg"
+                    
+                    # Return a corrected SkillSpec
+                    return SkillSpec(
+                        name=skill.name,
+                        color=correct_color,
+                        block_type=correct_block_type,
+                        example_question=skill.example_question,
+                        description=skill.description,
+                        icon_url=icon_url,
+                        media_suggestion=skill.media_suggestion
+                    )
+            
+            # If no correction needed or metadata not found, return the original
+            return skill
+            
+        except Exception as e:
+            logger.error(f"Error verifying skill metadata for {skill.name}", error=str(e))
+            return skill
+        
+    async def generate_block(
+        self,
+        skill: SkillSpec,
+        context: GenerationContext,
+        sequence_order: int = 0
+    ) -> LessonBlock:
+        """
+        Generate a complete lesson block for a given skill, preserving color and block type
         
         Args:
             skill: The thinking skill to use
@@ -35,28 +95,32 @@ class BlockGenerator:
             sequence_order: Position in the lesson sequence
             
         Returns:
-            Complete LessonBlock object with resources
+                Complete LessonBlock object with resources
         """
         try:
+            # First, verify the skill has the correct color and block type from metadata
+            verified_skill = self._verify_skill_metadata(skill)
+            
             logger.info(
                 "Generating lesson block",
-                skill=skill.name,
-                block_type=skill.block_type,
+                skill=verified_skill.name,
+                color=verified_skill.color,  # Log the color
+                block_type=verified_skill.block_type,
                 topic=context.topic
             )
             
-            # NEW: Retrieve scaffold resources
+            # Retrieve scaffold resources
             scaffold_resources = await scaffold_retriever.retrieve_scaffold_resources(
-                scaffold_type=skill.block_type,
-                skill_name=skill.name,
+                scaffold_type=verified_skill.block_type,
+                skill_name=verified_skill.name,
                 topic=context.topic,
-                top_k=2  # Limit to 2 PDF resources
+                top_k=2
             )
             
-            # Build RAG-enhanced context for this specific block
-            rag_context = await self.rag_builder.build_block_context(skill, context)
+            # Build RAG-enhanced context
+            rag_context = await self.rag_builder.build_block_context(verified_skill, context)
             
-            # Add resource hints to the context
+            # Add resource hints to context
             if scaffold_resources["pdfs"]:
                 resource_hints = "\n\nAvailable resources for this activity:\n"
                 for pdf in scaffold_resources["pdfs"]:
@@ -65,13 +129,13 @@ class BlockGenerator:
             
             # Build the generation prompt
             prompt = self.prompt_builder.build_block_prompt(
-                skill=skill,
+                skill=verified_skill,
                 context=context,
                 rag_context=rag_context
             )
             
             # Determine generation complexity
-            complexity = self._determine_complexity(context.difficulty, skill.color)
+            complexity = self._determine_complexity(context.difficulty, verified_skill.color)
             
             # Generate content using LLM
             llm_result = await self.llm_service.generate_lesson_block(
@@ -81,12 +145,12 @@ class BlockGenerator:
             
             # Extract and validate the generated content
             generated_content = llm_result['content']
-            self._validate_generated_content(generated_content, skill.block_type)
+            self._validate_generated_content(generated_content, verified_skill.block_type)
             
             # Build complete LessonBlock object with resources
             lesson_block = self._build_enhanced_lesson_block(
                 generated_content=generated_content,
-                skill=skill,
+                skill=verified_skill,  # Use the verified skill
                 llm_metadata=llm_result,
                 scaffold_resources=scaffold_resources
             )
@@ -94,7 +158,8 @@ class BlockGenerator:
             logger.info(
                 "Block generated successfully",
                 block_id=lesson_block.id,
-                skill=skill.name,
+                skill=verified_skill.name,
+                color=verified_skill.color,  # Log the color
                 tokens_used=llm_result.get('usage', {}).get('total_tokens', 0),
                 resources_attached=len(lesson_block.resources) if hasattr(lesson_block, "resources") else 0
             )
@@ -109,6 +174,7 @@ class BlockGenerator:
                 topic=context.topic
             )
             raise LLMGenerationError(f"Failed to generate block for {skill.name}: {str(e)}")
+
         
     
     def _build_enhanced_lesson_block(

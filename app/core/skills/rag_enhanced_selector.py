@@ -40,7 +40,7 @@ class RAGEnhancedSkillSelector:
         preferred_blocks: Optional[List[str]] = None
     ) -> List[SkillSpec]:
         """
-        Select skills using RAG to find relevant skills from your uploaded resources
+        Select skills using RAG while preserving color and block type from metadata
         
         Args:
             difficulty: 0.0-1.0 difficulty level
@@ -50,11 +50,11 @@ class RAGEnhancedSkillSelector:
             preferred_blocks: Optional block type preferences
             
         Returns:
-            List of selected SkillSpec objects from RAG
+            List of selected SkillSpec objects
         """
         try:
             logger.info(
-                "Starting RAG-enhanced skill selection",
+                "Starting enhanced skill selection",
                 difficulty=difficulty,
                 step_count=step_count,
                 subject=subject,
@@ -62,46 +62,264 @@ class RAGEnhancedSkillSelector:
                 preferred_blocks=preferred_blocks
             )
             
-            # Determine which scaffold types we need
-            needed_scaffolds = self._determine_needed_scaffolds(preferred_blocks, difficulty, step_count)
-            logger.info(f"Will generate skills for scaffolds: {needed_scaffolds}")
-            
-            # Discover available skills from RAG for only the needed scaffolds
-            available_skills = await self._discover_skills_from_rag(
-                subject=subject,
-                topic=topic,
-                difficulty=difficulty,
-                needed_scaffolds=needed_scaffolds,
-                step_count=step_count
-            )
-            
-            if not available_skills:
-                logger.warning("No skills found in RAG, falling back to static metadata")
+            # Get all available skills from the metadata
+            all_skills = self._get_all_skills_from_metadata()
+            if not all_skills:
+                logger.warning("No skills found in metadata, falling back to default selection")
                 return await self._fallback_skill_selection(difficulty, step_count, preferred_blocks)
             
-            # Select skills with cognitive progression
-            selected_skills = await self._select_with_rag_progression(
-                available_skills=available_skills,
-                step_count=step_count,
-                difficulty=difficulty,
-                preferred_blocks=preferred_blocks,
-                subject=subject,
-                topic=topic
-            )
+            # Determine scaffold sequence
+            if preferred_blocks and len(preferred_blocks) >= step_count:
+                scaffold_sequence = preferred_blocks[:step_count]
+            else:
+                scaffold_sequence = self._generate_varied_scaffold_sequence(step_count, difficulty)
+            
+            logger.info(f"Using scaffold sequence: {scaffold_sequence}")
+            
+            # Select skills based on scaffold sequence
+            selected_skills = []
+            
+            for i, block_type in enumerate(scaffold_sequence):
+                # Find skills that match this block type
+                matching_skills = [s for s in all_skills if s.block_type == block_type]
+                
+                if not matching_skills:
+                    logger.warning(f"No skills found for block type: {block_type}")
+                    continue
+                
+                # Select a skill for this position
+                selected_skill = self._select_skill_for_position(
+                    matching_skills,
+                    subject,
+                    topic,
+                    position=i,
+                    already_selected=[s.name for s in selected_skills],
+                    difficulty=difficulty
+                )
+                
+                if selected_skill:
+                    selected_skills.append(selected_skill)
+                
+            # If we don't have enough skills, add more
+            while len(selected_skills) < step_count:
+                # Get skills that haven't been used yet
+                used_names = [s.name for s in selected_skills]
+                available_skills = [s for s in all_skills if s.name not in used_names]
+                
+                if not available_skills:
+                    available_skills = all_skills  # If all are used, allow repeats
+                
+                # Select a random skill
+                selected_skills.append(random.choice(available_skills))
             
             logger.info(
-                "RAG skill selection completed",
+                "Enhanced skill selection completed",
                 selected_skills=[skill.name for skill in selected_skills],
+                colors=[skill.color for skill in selected_skills],
                 block_types=[skill.block_type for skill in selected_skills]
             )
             
-            return selected_skills
+            return selected_skills[:step_count]  # Ensure we only return the requested number
             
         except Exception as e:
-            logger.error("RAG skill selection failed", error=str(e))
-            # Fallback to static selection
+            logger.error("Enhanced skill selection failed", error=str(e))
             return await self._fallback_skill_selection(difficulty, step_count, preferred_blocks)
+
+    def _ensure_correct_icon_url(self, skill_name: str, color: str) -> str:
+        """Ensure the icon URL is correctly formatted for the skill and color"""
+        # Standard format for icon URLs
+        return f"https://cdn.structural-learning.com/icons/{color.lower()}_{skill_name.lower().replace(' ', '_')}.svg"
+
+    def _get_all_skills_from_metadata(self) -> List[SkillSpec]:
+        """Get all available skills from the metadata with correct icon URLs"""
+        try:
+            # Import the enhanced metadata
+            from app.core.skills.enhanced_metadata import enhanced_skill_metadata
+            
+            all_skills = []
+            
+            # Go through each color category
+            for color, color_data in enhanced_skill_metadata._skills_data.items():
+                # Go through each skill in this color
+                for skill_data in color_data.get("skills", []):
+                    # Generate the correct icon URL based on color and skill name
+                    icon_url = self._ensure_correct_icon_url(skill_data["skill"], color)
+                    
+                    # Create skill spec with color and block_type from metadata
+                    skill_spec = SkillSpec(
+                        name=skill_data["skill"],
+                        color=color,  # Important: Use color from metadata
+                        block_type=skill_data["block_type"],  # Important: Use block_type from metadata
+                        example_question=skill_data["example_question"],
+                        description=skill_data["description"],
+                        icon_url=icon_url,  # Use the corrected icon URL
+                        media_suggestion=skill_data.get("media_suggestion")
+                    )
+                    all_skills.append(skill_spec)
+            
+            logger.info(f"Loaded {len(all_skills)} skills from metadata with correct icon URLs")
+            return all_skills
+            
+        except Exception as e:
+            logger.error("Error loading skills from metadata", error=str(e))
+            return []
     
+    def _select_skill_for_position(
+        self,
+        matching_skills: List[SkillSpec],
+        subject: str,
+        topic: str = None,
+        position: int = 0,
+        already_selected: List[str] = None,
+        difficulty: float = 0.5
+    ) -> Optional[SkillSpec]:
+        """Select an appropriate skill for this position in the lesson"""
+        if not matching_skills:
+            return None
+            
+        already_selected = already_selected or []
+        
+        # Filter out already selected skills
+        available_skills = [s for s in matching_skills if s.name not in already_selected]
+        
+        if not available_skills:
+            available_skills = matching_skills  # If all used, allow repeats
+        
+        # Get subject preferences
+        subject_preferences = self._get_subject_preferences(subject)
+        
+        # Calculate scores for each skill
+        skill_scores = []
+        for skill in available_skills:
+            # Base score
+            score = 1.0
+            
+            # Subject preference boost
+            subject_boost = subject_preferences.get(skill.name, 0.5)
+            score *= subject_boost
+            
+            # Position-based boost
+            if position == 0:
+                # For first position, prefer Green and Blue skills
+                if skill.color == "Green":
+                    score *= 2.0
+                elif skill.color == "Blue":
+                    score *= 1.5
+            elif position >= 2:  # Later positions
+                # For later positions, prefer Red and Yellow skills
+                if skill.color == "Red":
+                    score *= 2.0
+                elif skill.color == "Yellow":
+                    score *= 1.5
+            
+            # Add randomness to avoid repetition
+            score *= (0.8 + random.random() * 0.4)  # Between 0.8 and 1.2
+            
+            skill_scores.append((skill, score))
+        
+        # Sort by score and select the highest
+        skill_scores.sort(key=lambda x: x[1], reverse=True)
+        
+        if skill_scores:
+            return skill_scores[0][0]
+        
+        return random.choice(available_skills)
+
+    def _get_subject_preferences(self, subject: str) -> Dict[str, float]:
+        """Get subject-specific skill preferences"""
+        # These could be refined with curricular analysis
+        subject_preferences = {
+            "Science": {
+                "Categorise": 0.9,
+                "Compare": 0.8,
+                "Hypothesise": 0.9,
+                "Explain": 0.8,
+                "Sequence": 0.7
+            },
+            "Mathematics": {
+                "Sequence": 0.9,
+                "Compare": 0.8,
+                "Categorise": 0.7,
+                "Rank": 0.8
+            },
+            "English": {
+                "Explain": 0.9,
+                "Elaborate": 0.8,
+                "Target Vocabulary": 0.9,
+                "Adjectives": 0.8
+            },
+            "History": {
+                "Sequence": 0.9,
+                "Explain": 0.8,
+                "Compare": 0.7,
+                "New Perspective": 0.8
+            },
+            "Geography": {
+                "Categorise": 0.9,
+                "Compare": 0.8,
+                "Connect": 0.7,
+                "Explain": 0.7
+            }
+        }
+        
+        return subject_preferences.get(subject, {})
+    def _select_appropriate_skill(
+        self,
+        matching_skills: List[SkillSpec],
+        subject: str,
+        topic: str,
+        difficulty: float,
+        position: int,
+        already_selected: List[SkillSpec]
+    ) -> Optional[SkillSpec]:
+        """Select an appropriate skill for this position"""
+        
+        # Avoid repeating skills
+        unused_skills = [s for s in matching_skills if s.name not in [skill.name for skill in already_selected]]
+        if not unused_skills:
+            unused_skills = matching_skills  # If all are used, allow repeats
+        
+        # Adjust preferences based on subject
+        subject_preferences = self._get_subject_preferences(subject)
+        
+        # Adjust preferences based on position
+        if position == 0:
+            # Prefer Green or Blue skills for first position
+            color_boost = {"Green": 2.0, "Blue": 1.5}
+        elif position == len(already_selected):
+            # Prefer Red or Yellow skills for last position
+            color_boost = {"Red": 2.0, "Yellow": 1.5}
+        else:
+            # No strong color preference for middle positions
+            color_boost = {}
+        
+        # Calculate scores for each skill
+        skill_scores = []
+        for skill in unused_skills:
+            # Base score
+            score = 1.0
+            
+            # Boost based on subject preferences
+            subject_boost = subject_preferences.get(skill.name, 0.5)
+            score *= subject_boost
+            
+            # Boost based on position/color
+            color_multiplier = color_boost.get(skill.color, 1.0)
+            score *= color_multiplier
+            
+            # Add a random factor to avoid always picking the same skills
+            score *= (0.8 + random.random() * 0.4)  # Random factor between 0.8 and 1.2
+            
+            skill_scores.append((skill, score))
+        
+        # Sort by score and select the best
+        skill_scores.sort(key=lambda x: x[1], reverse=True)
+        
+        if skill_scores:
+            return skill_scores[0][0]
+        
+        return None
+
     def _determine_needed_scaffolds(
         self, 
         preferred_blocks: Optional[List[str]], 
