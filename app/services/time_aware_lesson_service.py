@@ -66,6 +66,13 @@ class TimeAwareLessonService:
                 preferred_blocks=preferred_scaffolds
             )
             
+            logger.info(
+                "Skills selected for lesson",
+                lesson_id=lesson_id,
+                skills=[skill for skill in selected_skills],
+                scaffold_sequence=preferred_scaffolds
+            )
+            
             # Step 3: Build enhanced generation context
             generation_context = await self.rag_builder.build_lesson_context(
                 topic=request.topic,

@@ -16,7 +16,7 @@ class BlockType(str, Enum):
     MAP_IT = "MapIt"
     SAY_IT = "SayIt"
     BUILD_IT = "BuildIt"
-    PROMPT = "Prompt"  # NEW: Simple prompt instead of full scaffold
+    PROMPT = "Prompt"  # Simple prompt instead of full scaffold
 
 
 class SkillMetadata(BaseModel):
@@ -25,12 +25,14 @@ class SkillMetadata(BaseModel):
     icon_url: str
     category: str
 
+
 class ResourceLink(BaseModel):
     """Link to a supporting resource"""
     type: str  # "pdf", "video", "image"
     name: str
     description: Optional[str] = None
     url: str
+
 
 class LessonBlock(BaseModel):
     id: str
@@ -40,6 +42,8 @@ class LessonBlock(BaseModel):
     steps: List[str]
     skill: SkillMetadata
     supporting_question: str
+    complexity_level: str
+    complexity_display_name: str
     media: Optional[List[str]] = []
     sentence_starters: Optional[List[str]] = []
     materials: Optional[List[str]] = []
@@ -47,10 +51,16 @@ class LessonBlock(BaseModel):
     criteria: Optional[List[str]] = []
     resources: Optional[List[ResourceLink]] = []
     
-    # NEW: Fields for prompt-type blocks
+    # Fields for prompt-type blocks
     interaction_type: Optional[str] = None  # "think_pair_share", "whole_class", etc.
     follow_up_questions: Optional[List[str]] = []
     success_indicators: Optional[List[str]] = []
+    
+
+class HealthResponse(BaseModel):
+    status: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    version: str = "1.0.0"
 
 
 class LessonMetadata(BaseModel):
@@ -58,6 +68,7 @@ class LessonMetadata(BaseModel):
     cognitive_progression: List[str]
     estimated_duration: str
     difficulty_level: str
+    complexity_levels: Optional[List[str]] = []  # Make this field optional with a default empty list
 
 
 class LessonResponse(BaseModel):
@@ -70,17 +81,3 @@ class LessonResponse(BaseModel):
     blocks: List[LessonBlock]
     metadata: LessonMetadata
     generated_at: datetime = Field(default_factory=datetime.utcnow)
-
-
-class HealthResponse(BaseModel):
-    status: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-    version: str = "1.0.0"
-
-
-class ErrorResponse(BaseModel):
-    error: str
-    message: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-    
-

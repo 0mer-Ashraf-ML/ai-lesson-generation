@@ -1,0 +1,1043 @@
+{
+    "Blue": {
+      "category": "Organizing Ideas",
+      "description": "Structuring information, making connections",
+      "usage": "During exploration, when students need to sort/compare information",
+      "cognitive_purpose": "Help students organize their thinking and make connections between ideas",
+      "skills": [
+        {
+          "skill": "Categorise",
+          "example_question": "How can we group these things?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/blue_categorise.svg",
+          "description": "Sort items into groups based on shared characteristics",
+          "framework_guidance": {
+            "key_principle": "Provide clear criteria for grouping and allow students to explain their reasoning"
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Sort simple items by clear criteria.",
+              "example": "Categorise animals into pets and wild animals.",
+              "question_stem": "How can we sort these by...?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Categorise by more than one characteristic.",
+              "example": "Categorise food into groups: healthy/unhealthy and by meal type.",
+              "question_stem": "How else could we group these?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Create unique categories and justify.",
+              "example": "Categorise inventions by how they changed people's lives.",
+              "question_stem": "What categories can you create and why?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Compare",
+          "example_question": "How are these things similar or different?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/blue_compare.svg",
+          "description": "Identify similarities and differences.",
+          "framework_guidance": {
+            "key_principle": "Support students to identify relevant features to compare."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Simple comparison between two things.",
+              "example": "Compare cats and dogs.",
+              "question_stem": "How are these similar or different?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Compare multiple things with more detail.",
+              "example": "Compare habitats of two animals.",
+              "question_stem": "What similarities/differences do you notice?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Compare complex ideas and evaluate.",
+              "example": "Compare renewable and non-renewable energy sources.",
+              "question_stem": "How does comparing help you decide?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Connect",
+          "example_question": "How are these ideas linked?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/blue_connect.svg",
+          "description": "Link ideas together to see relationships.",
+          "framework_guidance": {
+            "key_principle": "Encourage students to explain their connections clearly."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Connect simple related ideas.",
+              "example": "Connect animals to their habitats.",
+              "question_stem": "What links can you find?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Connect ideas across contexts.",
+              "example": "Connect food chains and food webs.",
+              "question_stem": "How does this connect to...?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Make connections that show deeper understanding.",
+              "example": "Connect historical events to current issues.",
+              "question_stem": "What big ideas are connected here?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Rank",
+          "example_question": "How can we put these in order?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/blue_rank.svg",
+          "description": "Order items by importance, size, etc.",
+          "framework_guidance": {
+            "key_principle": "Students justify the order they choose."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Rank by clear criteria.",
+              "example": "Rank animals by size.",
+              "question_stem": "How would you rank these?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Rank with reasoning.",
+              "example": "Rank sources of energy by sustainability.",
+              "question_stem": "Why did you choose this order?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Create own ranking criteria.",
+              "example": "Rank historical figures by impact.",
+              "question_stem": "What criteria did you use to rank?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Sequence",
+          "example_question": "What order should these go in?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/blue_sequence.svg",
+          "description": "Put steps or events in logical order.",
+          "framework_guidance": {
+            "key_principle": "Help students understand sequences and consequences."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Put simple steps in order.",
+              "example": "Sequence steps to make a sandwich.",
+              "question_stem": "What comes first?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Sequence more complex processes.",
+              "example": "Sequence life cycle stages.",
+              "question_stem": "What comes next?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Sequence events with cause and effect.",
+              "example": "Sequence historical events and explain impact.",
+              "question_stem": "How does the sequence affect the outcome?",
+              "scaffold_level": "Low"
+            }
+          }
+        }
+      ]
+    },
+  
+  
+  
+  
+    "Green": {
+      "category": "Getting Started",
+      "description": "Initial engagement, prior knowledge activation",
+      "usage": "Lesson opening, knowledge retrieval, foundation setting",
+      "cognitive_purpose": "Activate prior knowledge and establish learning foundations",
+      "skills": [
+        {
+          "skill": "Retrieve",
+          "example_question": "What do we need to know before we start?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/green_retrieve.svg",
+          "description": "Get information from memory.",
+          "framework_guidance": {
+            "key_principle": "Connect new learning with what students already know."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Retrieve simple facts.",
+              "example": "Retrieve three animals that live in the jungle.",
+              "question_stem": "What can you remember about...?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Retrieve with connections.",
+              "example": "Retrieve examples of different habitats and match animals.",
+              "question_stem": "What do you remember about... and how does it link to...?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Retrieve and explain significance.",
+              "example": "Retrieve information about rainforests and explain their importance.",
+              "question_stem": "What details can you recall and explain?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Identify",
+          "example_question": "What key points can you identify?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/green_identify.svg",
+          "description": "Spot and name important information.",
+          "framework_guidance": {
+            "key_principle": "Help students notice relevant details."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Identify simple details.",
+              "example": "Identify animals in a picture.",
+              "question_stem": "What do you see?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Identify and describe.",
+              "example": "Identify parts of a plant and describe them.",
+              "question_stem": "What can you identify and describe?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Identify hidden or subtle details.",
+              "example": "Identify key ideas in a text passage.",
+              "question_stem": "What important ideas can you find?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Extract",
+          "example_question": "What useful information can we extract?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/green_extract.svg",
+          "description": "Pull out relevant information from a larger source and explain it.",
+          "framework_guidance": {
+            "key_principle": "Guide students to focus on what matters and say it clearly."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Extract basic details and say them.",
+              "example": "Extract key words from a sentence and share aloud.",
+              "question_stem": "What words stand out?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Extract connected points and explain.",
+              "example": "Extract facts from a short paragraph and say what they mean.",
+              "question_stem": "What facts can you pick out?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Extract and justify relevance verbally.",
+              "example": "Extract important info from an article and explain why it’s useful.",
+              "question_stem": "Why did you choose these details?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Eliminate",
+          "example_question": "What information can we remove?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/green_eliminate.svg",
+          "description": "Remove unnecessary or unhelpful information to refine content.",
+          "framework_guidance": {
+            "key_principle": "Teach students to filter out distractions by building cleaner outputs."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Eliminate obvious unrelated info.",
+              "example": "Eliminate items that don’t belong in a group and rebuild the list.",
+              "question_stem": "What doesn’t fit?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Eliminate with reasoning.",
+              "example": "Eliminate sentences that are off-topic and rewrite the paragraph.",
+              "question_stem": "Why does this not belong?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Eliminate and refine focus.",
+              "example": "Eliminate weak arguments in an essay draft and build a stronger version.",
+              "question_stem": "What can be removed to improve this?",
+              "scaffold_level": "Low"
+            }
+          }
+        }
+      ]
+    },
+  
+  
+  
+    "Orange": {
+      "category": "Language Building",
+      "description": "Expanding language skills and vocabulary use",
+      "usage": "When students learn and apply language structures",
+      "cognitive_purpose": "Develop students’ use of precise language for clear expression",
+      "skills": [
+        {
+          "skill": "Adjectives",
+          "example_question": "What words can we use to describe this?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/orange_adjectives.svg",
+          "description": "Use adjectives to add detail to nouns.",
+          "framework_guidance": {
+            "key_principle": "Encourage students to choose adjectives that add clarity and vividness."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Use simple descriptive words.",
+              "example": "Add adjectives to describe an animal.",
+              "question_stem": "What words describe this?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Use adjectives for detail and mood.",
+              "example": "Describe a setting using vivid adjectives.",
+              "question_stem": "What other words make this clearer?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Use precise adjectives for impact.",
+              "example": "Revise a paragraph to improve adjectives.",
+              "question_stem": "Which adjectives create the best picture?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Adverbs",
+          "example_question": "How did it happen?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/orange_adverbs.svg",
+          "description": "Use adverbs to describe actions more precisely.",
+          "framework_guidance": {
+            "key_principle": "Guide students to use adverbs to modify verbs and adjectives effectively."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Add basic adverbs to actions.",
+              "example": "Add adverbs to simple sentences.",
+              "question_stem": "How can we say how it happened?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Use adverbs to show degree or manner.",
+              "example": "Describe how someone spoke or moved.",
+              "question_stem": "What adverb makes this clearer?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Use varied adverbs for style.",
+              "example": "Rewrite a short text using stronger adverbs.",
+              "question_stem": "How do your adverbs change the meaning?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Conjunctions",
+          "example_question": "How can we join these ideas?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/orange_conjunctions.svg",
+          "description": "Use conjunctions to link clauses and ideas.",
+          "framework_guidance": {
+            "key_principle": "Teach students to choose conjunctions that clarify meaning."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Use basic conjunctions like 'and' or 'but'.",
+              "example": "Join two simple sentences.",
+              "question_stem": "What word joins these ideas?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Use conjunctions for cause and effect.",
+              "example": "Write sentences using 'because', 'so', 'although'.",
+              "question_stem": "How can you link these thoughts?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Use a range of conjunctions in complex sentences.",
+              "example": "Combine ideas in a paragraph with varied conjunctions.",
+              "question_stem": "What conjunction makes your point clearer?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Prepositions",
+          "example_question": "Where is it? When did it happen?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/orange_prepositions.svg",
+          "description": "Use prepositions to show place, time, or direction.",
+          "framework_guidance": {
+            "key_principle": "Help students use prepositions correctly in context."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Use simple place/time prepositions.",
+              "example": "Place objects using prepositions.",
+              "question_stem": "Where is it?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Use prepositions in phrases.",
+              "example": "Describe where animals live.",
+              "question_stem": "What preposition fits best?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Use prepositions in detailed sentences.",
+              "example": "Write sentences with varied prepositions.",
+              "question_stem": "How do your prepositions add clarity?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Target Vocabulary",
+          "example_question": "What key words do we need to know?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/orange_target_vocab.svg",
+          "description": "Use subject-specific vocabulary accurately.",
+          "framework_guidance": {
+            "key_principle": "Encourage repeated use of key words in speaking and writing."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Use basic subject words.",
+              "example": "Name key words in a topic.",
+              "question_stem": "What is this word?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Use key words in sentences.",
+              "example": "Explain meaning with examples.",
+              "question_stem": "How can you use this word?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Apply key words in context.",
+              "example": "Discuss a topic using accurate terms.",
+              "question_stem": "Where does this word fit best?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Verbs",
+          "example_question": "What action is happening?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/orange_verbs.svg",
+          "description": "Use action words to express what is happening.",
+          "framework_guidance": {
+            "key_principle": "Model clear and accurate verb use."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Use simple verbs.",
+              "example": "Identify verbs in a sentence.",
+              "question_stem": "What is the action?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Use verbs in varied tenses.",
+              "example": "Change sentences to past and future tense.",
+              "question_stem": "How does the verb change?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Use precise verbs for impact.",
+              "example": "Replace weak verbs with stronger ones.",
+              "question_stem": "Which verb makes this clearer?",
+              "scaffold_level": "Low"
+            }
+          }
+        }
+      ]
+    },
+  
+    "Red": {
+      "category": "Extending Ideas",
+      "description": "Creative thinking, higher-order reasoning, deep exploration",
+      "usage": "When students deepen, extend or transform ideas",
+      "cognitive_purpose": "Stretch students to think critically, creatively and evaluatively",
+      "skills": [
+        {
+          "skill": "Combine",
+          "example_question": "How can we put these ideas together?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_combine.svg",
+          "description": "Bring different ideas or elements together to form something new.",
+          "framework_guidance": {
+            "key_principle": "Encourage students to merge ideas creatively."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Combine simple ideas.",
+              "example": "Combine two sentences into one.",
+              "question_stem": "What can we join together?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Combine ideas for a new outcome.",
+              "example": "Combine facts to write a short paragraph.",
+              "question_stem": "How do these fit together?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Combine different sources or viewpoints.",
+              "example": "Combine multiple ideas to create a new product.",
+              "question_stem": "How does combining ideas make something new?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Complete",
+          "example_question": "What is missing?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_complete.svg",
+          "description": "Add missing parts to make something whole.",
+          "framework_guidance": {
+            "key_principle": "Help students spot gaps and fill them thoughtfully."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Complete simple tasks.",
+              "example": "Complete a sentence.",
+              "question_stem": "What should we add?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Complete more detailed ideas.",
+              "example": "Finish a story with a logical ending.",
+              "question_stem": "How will you finish this?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Complete complex or abstract tasks.",
+              "example": "Complete an argument with supporting evidence.",
+              "question_stem": "What more do you need to make this whole?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Designate",
+          "example_question": "Who or what is responsible?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_designate.svg",
+          "description": "Assign roles, labels, or purposes.",
+          "framework_guidance": {
+            "key_principle": "Support clear assignment of roles or ideas."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Designate simple labels.",
+              "example": "Label parts of a diagram.",
+              "question_stem": "What name or role fits?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Designate roles in a group task.",
+              "example": "Assign tasks to group members.",
+              "question_stem": "Who will do what?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Designate responsibilities for complex tasks.",
+              "example": "Designate leadership roles for a project.",
+              "question_stem": "How do you decide who does what?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Elaborate",
+          "example_question": "Can you add more detail?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_elaborate.svg",
+          "description": "Expand ideas by adding details and explanations.",
+          "framework_guidance": {
+            "key_principle": "Encourage depth and detail in thinking."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Add simple details.",
+              "example": "Add a detail to a sentence.",
+              "question_stem": "What more can you say?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Explain ideas more fully.",
+              "example": "Add examples to support a point.",
+              "question_stem": "How can you expand this?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Elaborate with evidence and reasoning.",
+              "example": "Elaborate on a viewpoint with examples and reasons.",
+              "question_stem": "What details strengthen your idea?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Generalise",
+          "example_question": "What general idea can you form?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_generalise.svg",
+          "description": "Form broad ideas from specific examples.",
+          "framework_guidance": {
+            "key_principle": "Guide students to see wider patterns."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Form simple general ideas.",
+              "example": "Generalise about animals with fur.",
+              "question_stem": "What do these have in common?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Form general rules or statements.",
+              "example": "Generalise from multiple examples.",
+              "question_stem": "What bigger idea can you make?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Form generalisations and test them.",
+              "example": "Form a rule and check if it holds.",
+              "question_stem": "Does this apply broadly?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Generate Questions",
+          "example_question": "What questions can we ask?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_generate_questions.svg",
+          "description": "Come up with questions to explore topics.",
+          "framework_guidance": {
+            "key_principle": "Teach students to ask good, deep questions."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Ask basic questions.",
+              "example": "Ask who, what, when questions.",
+              "question_stem": "What do you want to know?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Ask questions that require explanation.",
+              "example": "Ask why and how questions.",
+              "question_stem": "What deeper questions can you ask?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Ask big, open-ended questions.",
+              "example": "Ask questions that challenge ideas.",
+              "question_stem": "What questions spark more thinking?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Hypothesis",
+          "example_question": "What do you predict will happen?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_hypothesis.svg",
+          "description": "Make an educated guess to test.",
+          "framework_guidance": {
+            "key_principle": "Guide students to form testable ideas."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Make simple predictions.",
+              "example": "Predict what happens next.",
+              "question_stem": "What do you think will happen?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Form a testable hypothesis.",
+              "example": "Predict what will happen in an experiment.",
+              "question_stem": "Why do you think that?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Form complex hypotheses with reasoning.",
+              "example": "Form a hypothesis and explain evidence.",
+              "question_stem": "What evidence supports your prediction?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Imagine",
+          "example_question": "What can you create in your mind?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_imagine.svg",
+          "description": "Picture ideas and possibilities.",
+          "framework_guidance": {
+            "key_principle": "Encourage creative exploration."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Imagine simple scenarios.",
+              "example": "Imagine a different ending.",
+              "question_stem": "What could it look like?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Imagine alternative outcomes.",
+              "example": "Imagine how history could change.",
+              "question_stem": "What if...?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Imagine and design creative solutions.",
+              "example": "Invent something new.",
+              "question_stem": "What could you invent?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Infer",
+          "example_question": "What can you figure out?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_infer.svg",
+          "description": "Use clues to draw conclusions.",
+          "framework_guidance": {
+            "key_principle": "Teach students to read between the lines."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Make simple inferences.",
+              "example": "Infer feelings from pictures.",
+              "question_stem": "What do you think is happening?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Infer meaning from text.",
+              "example": "Infer what a character feels.",
+              "question_stem": "Why do you think that?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Infer big ideas and hidden meaning.",
+              "example": "Infer author’s message.",
+              "question_stem": "What clues help you infer this?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Integrate",
+          "example_question": "How do these ideas fit together?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_integrate.svg",
+          "description": "Combine information from different sources.",
+          "framework_guidance": {
+            "key_principle": "Help students synthesise ideas clearly."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Combine two pieces of info.",
+              "example": "Integrate facts from two texts.",
+              "question_stem": "How do these fit?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Integrate multiple sources.",
+              "example": "Combine graphs and text to explain an idea.",
+              "question_stem": "How do these work together?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Integrate ideas into new insights.",
+              "example": "Integrate ideas for a research project.",
+              "question_stem": "What new understanding comes from this?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Judge",
+          "example_question": "What do you think about it?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_judge.svg",
+          "description": "Form opinions and justify them.",
+          "framework_guidance": {
+            "key_principle": "Support fair and reasoned judgement."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Give simple opinions.",
+              "example": "Say if you like something.",
+              "question_stem": "Do you agree?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Judge with reasons.",
+              "example": "Explain why you prefer something.",
+              "question_stem": "Why do you think that?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Judge and evaluate critically.",
+              "example": "Judge an argument’s strength.",
+              "question_stem": "What makes you think that?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "New Perspective",
+          "example_question": "How could you see this differently?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_new_perspective.svg",
+          "description": "Look at ideas from a fresh angle.",
+          "framework_guidance": {
+            "key_principle": "Challenge students to see other viewpoints."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Think of a simple alternative view.",
+              "example": "See a story from another character’s view.",
+              "question_stem": "What if you were them?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Explore other viewpoints in depth.",
+              "example": "Explain an argument from the other side.",
+              "question_stem": "How would someone else see this?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Create entirely new perspectives.",
+              "example": "Propose a totally different solution.",
+              "question_stem": "What new angle can you add?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Summarize",
+          "example_question": "What’s the main idea?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/red_summarize.svg",
+          "description": "State the main points clearly.",
+          "framework_guidance": {
+            "key_principle": "Teach students to identify what matters most."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Summarize short information.",
+              "example": "Summarize a short story.",
+              "question_stem": "What’s it about?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Summarize longer or complex information.",
+              "example": "Summarize a chapter.",
+              "question_stem": "What are the main points?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Summarize and evaluate key points.",
+              "example": "Summarize and critique an article.",
+              "question_stem": "What’s the big idea here?",
+              "scaffold_level": "Low"
+            }
+          }
+        }
+      ]
+    },
+  
+  
+    "Yellow": {
+      "category": "Clarifying and Checking",
+      "description": "Deepening understanding by clarifying and confirming ideas",
+      "usage": "When students need to expand, support, check or prove their thinking",
+      "cognitive_purpose": "Help students clarify, illustrate, justify and check their ideas",
+      "skills": [
+        {
+          "skill": "Amplify",
+          "example_question": "How can you add more to this idea?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/yellow_amplify.svg",
+          "description": "Add detail or emphasis to strengthen an idea.",
+          "framework_guidance": {
+            "key_principle": "Encourage students to expand ideas with more information or stronger language."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Add simple extra details.",
+              "example": "Add another sentence to explain.",
+              "question_stem": "What more can you add?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Add depth with reasons or examples.",
+              "example": "Amplify an argument with more evidence.",
+              "question_stem": "How can you expand this?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Amplify to persuade or emphasise key points.",
+              "example": "Rewrite to strengthen key points.",
+              "question_stem": "How does amplifying help your idea?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Exemplify",
+          "example_question": "Can you give an example?",
+          "block_type": "BuildIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/yellow_exemplify.svg",
+          "description": "Provide clear examples to illustrate a point.",
+          "framework_guidance": {
+            "key_principle": "Support students to use relevant, clear examples to explain ideas."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Give a simple example.",
+              "example": "Name an example of a mammal.",
+              "question_stem": "What’s an example?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Use more detailed examples.",
+              "example": "Give an example and explain why it fits.",
+              "question_stem": "What’s a strong example?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Use multiple examples to support an idea.",
+              "example": "Use examples to prove a general point.",
+              "question_stem": "How do your examples support your idea?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Explain",
+          "example_question": "How can you make this clearer?",
+          "block_type": "SayIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/yellow_explain.svg",
+          "description": "Make an idea clear and understandable.",
+          "framework_guidance": {
+            "key_principle": "Teach students to use clear language and structure when explaining."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Explain simple ideas.",
+              "example": "Explain how something works.",
+              "question_stem": "What does this mean?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Explain with more detail or steps.",
+              "example": "Explain a process step by step.",
+              "question_stem": "How can you make this clearer?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Explain complex ideas with clarity.",
+              "example": "Explain a concept with examples and reasons.",
+              "question_stem": "How can you explain this fully?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Validate",
+          "example_question": "How do you know this is right?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/yellow_validate.svg",
+          "description": "Confirm that an idea or information is correct.",
+          "framework_guidance": {
+            "key_principle": "Guide students to check accuracy using evidence or reasoning."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Check simple facts.",
+              "example": "Check if an answer is correct.",
+              "question_stem": "Is this right?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Validate using evidence.",
+              "example": "Prove a statement with examples.",
+              "question_stem": "What shows this is true?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Validate complex ideas or arguments.",
+              "example": "Check if a conclusion is supported by evidence.",
+              "question_stem": "How do you know this is valid?",
+              "scaffold_level": "Low"
+            }
+          }
+        },
+        {
+          "skill": "Verify",
+          "example_question": "How can you prove it?",
+          "block_type": "MapIt",
+          "icon_url": "https://cdn.structural-learning.com/icons/yellow_verify.svg",
+          "description": "Double-check facts or ideas for truth and accuracy.",
+          "framework_guidance": {
+            "key_principle": "Support students to test and confirm information."
+          },
+          "cognitive_complexity_levels": {
+            "getting_started": {
+              "description": "Check a basic fact.",
+              "example": "Look up if something is true.",
+              "question_stem": "Is this correct?",
+              "scaffold_level": "High"
+            },
+            "thinking_harder": {
+              "description": "Verify ideas using different sources.",
+              "example": "Cross-check facts from two sources.",
+              "question_stem": "How can you check this?",
+              "scaffold_level": "Medium"
+            },
+            "stretching_thinking": {
+              "description": "Verify ideas using tests or experiments.",
+              "example": "Test a claim through investigation.",
+              "question_stem": "How can you prove this works?",
+              "scaffold_level": "Low"
+            }
+          }
+        }
+      ]
+    }
+  }
+  

@@ -110,7 +110,7 @@ class BlockGenerator:
             )
             raise LLMGenerationError(f"Failed to generate block for {skill.name}: {str(e)}")
         
-        # Add this new method to build enhanced blocks with resources
+    
     def _build_enhanced_lesson_block(
         self,
         generated_content: Dict[str, Any],
@@ -118,81 +118,89 @@ class BlockGenerator:
         llm_metadata: Dict[str, Any],
         scaffold_resources: Dict[str, Any]
     ) -> LessonBlock:
-            """Build a complete LessonBlock object with scaffold resources"""
-            
-            # Create skill metadata
-            skill_metadata = SkillMetadata(
-                name=skill.name,
-                color=skill.color,
-                icon_url=skill.icon_url,
-                category=self._get_category_name(skill.color)
-            )
-            
-            # Create block ID
-            block_id = f"block-{str(uuid.uuid4())[:8]}"
-            
-            # Build media URLs list
-            media = []
-            
-            # Add scaffold image if available
-            if scaffold_resources.get("image"):
-                media.append(scaffold_resources["image"])
-            # Fall back to default media suggestion
-            elif skill.media_suggestion:
-                media.append(f"https://cdn.structural-learning.com/templates/{skill.media_suggestion}")
-            
-            # Create the lesson block
-            lesson_block = LessonBlock(
-                id=block_id,
-                type=skill.block_type,
-                title=generated_content['title'].strip(),
-                description=generated_content['description'].strip(),
-                steps=[step.strip() for step in generated_content['steps']],
-                skill=skill_metadata,
-                supporting_question=generated_content['supporting_question'].strip(),
-                media=media
-            )
-            
-            # Add optional fields based on block type
-            if 'sentence_starters' in generated_content:
-                lesson_block.sentence_starters = generated_content['sentence_starters']
-            
-            if 'materials' in generated_content:
-                lesson_block.materials = generated_content['materials']
-            
-            if 'target_words' in generated_content:
-                lesson_block.target_words = generated_content['target_words']
-            
-            if 'criteria' in generated_content:
-                lesson_block.criteria = generated_content['criteria']
-            
-            # Add resource links
-            from app.models.responses import ResourceLink
-            
-            resource_links = []
-            
-            # Add PDF resources
-            for pdf in scaffold_resources.get("pdfs", []):
-                resource_links.append(ResourceLink(
-                    type="pdf",
-                    name=pdf.get("name", "Resource"),
-                    description=f"{skill.block_type} resource for {skill.name}",
-                    url=pdf.get("url", "")
-                ))
-            
-            # Add video resource if available
-            if scaffold_resources.get("video"):
-                resource_links.append(ResourceLink(
-                    type="video",
-                    name=f"{skill.name} {skill.block_type} Tutorial",
-                    description=f"How to implement {skill.name} thinking skill",
-                    url=scaffold_resources.get("video")
-                ))
-            
-            # Set resources on the block
-            lesson_block.resources = resource_links
-            
-            return lesson_block
+        """Build a complete LessonBlock object with scaffold resources and complexity level"""
+        
+        # Create skill metadata
+        skill_metadata = SkillMetadata(
+            name=skill.name,
+            color=skill.color,
+            icon_url=skill.icon_url,
+            category=self._get_category_name(skill.color)
+        )
+        
+        # Create block ID
+        block_id = f"block-{str(uuid.uuid4())[:8]}"
+        
+        # Build media URLs list
+        media = []
+        
+        # Add scaffold image if available
+        if scaffold_resources.get("image"):
+            media.append(scaffold_resources["image"])
+        # Fall back to default media suggestion
+        elif skill.media_suggestion:
+            media.append(f"https://cdn.structural-learning.com/templates/{skill.media_suggestion}")
+        
+        # Get complexity level from generated content or use default
+        from app.core.skills.enhanced_metadata import enhanced_skill_metadata
+        
+        complexity_level = generated_content.get('complexity_level', 'thinking_harder')
+        complexity_display_name = enhanced_skill_metadata.get_cognitive_level_display_name(complexity_level)
+        
+        # Create the lesson block
+        lesson_block = LessonBlock(
+            id=block_id,
+            type=skill.block_type,
+            title=generated_content['title'].strip(),
+            description=generated_content['description'].strip(),
+            steps=[step.strip() for step in generated_content['steps']],
+            skill=skill_metadata,
+            supporting_question=generated_content['supporting_question'].strip(),
+            complexity_level=complexity_level,  # Add this field
+            complexity_display_name=complexity_display_name,  # Add this field
+            media=media
+        )
+        
+        # Add optional fields based on block type
+        if 'sentence_starters' in generated_content:
+            lesson_block.sentence_starters = generated_content['sentence_starters']
+        
+        if 'materials' in generated_content:
+            lesson_block.materials = generated_content['materials']
+        
+        if 'target_words' in generated_content:
+            lesson_block.target_words = generated_content['target_words']
+        
+        if 'criteria' in generated_content:
+            lesson_block.criteria = generated_content['criteria']
+        
+        # Add resource links
+        from app.models.responses import ResourceLink
+        
+        resource_links = []
+        
+        # Add PDF resources
+        for pdf in scaffold_resources.get("pdfs", []):
+            resource_links.append(ResourceLink(
+                type="pdf",
+                name=pdf.get("name", "Resource"),
+                description=f"{skill.block_type} resource for {skill.name}",
+                url=pdf.get("url", "")
+            ))
+        
+        # Add video resource if available
+        if scaffold_resources.get("video"):
+            resource_links.append(ResourceLink(
+                type="video",
+                name=f"{skill.name} {skill.block_type} Tutorial",
+                description=f"How to implement {skill.name} thinking skill",
+                url=scaffold_resources.get("video")
+            ))
+        
+        # Set resources on the block
+        lesson_block.resources = resource_links
+        
+        return lesson_block
 
     
     def _determine_complexity(self, difficulty: float, skill_color: str) -> str:
@@ -225,6 +233,12 @@ class BlockGenerator:
         
         if not isinstance(content['supporting_question'], str) or len(content['supporting_question'].strip()) < 10:
             raise ValidationError("Supporting question must be at least 10 characters long")
+        
+        # Validate complexity level if present
+        if 'complexity_level' in content:
+            valid_levels = ['getting_started', 'thinking_harder', 'stretching_thinking']
+            if content['complexity_level'] not in valid_levels:
+                raise ValidationError(f"Invalid complexity level: {content['complexity_level']}. Must be one of: {', '.join(valid_levels)}")
         
         # Block-specific validations
         if block_type == "SayIt" and 'sentence_starters' in content:

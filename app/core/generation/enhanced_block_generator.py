@@ -31,7 +31,7 @@ class EnhancedBlockGenerator:
         time_flexibility: str = "moderate"
     ) -> Tuple[List[LessonBlock], Dict[str, Any]]:
         """
-        Generate blocks with intelligent scaffolding decisions
+        Generate blocks with intelligent scaffolding decisions and complexity levels
         
         Args:
             skills: List of skills for the lesson
@@ -61,14 +61,30 @@ class EnhancedBlockGenerator:
             # Generate blocks based on decisions
             lesson_blocks = []
             total_estimated_time = 0
+            complexity_levels_used = []
             
             for i, (skill, decision) in enumerate(zip(skills, scaffold_decisions)):
+                # Determine complexity level for this block
+                from app.core.skills.enhanced_selector import enhanced_skill_selector
+                complexity_level = enhanced_skill_selector.select_complexity_level(
+                    skill=skill,
+                    context=context,
+                    position=i,
+                    total_steps=len(skills),
+                    previous_levels=complexity_levels_used
+                )
+                complexity_levels_used.append(complexity_level)
+                
+                # Store complexity level in decision for logging
+                decision["complexity_level"] = complexity_level
+                
                 if decision["use_scaffold"]:
                     # Generate full scaffold block
                     block = await self._generate_full_scaffold_block(
                         skill=skill,
                         context=context,
                         sequence_order=i,
+                        complexity_level=complexity_level
                     )
                 else:
                     # Generate simple prompt block
@@ -76,7 +92,8 @@ class EnhancedBlockGenerator:
                         skill=skill,
                         context=context,
                         sequence_order=i,
-                        prompt_data=decision["prompt_data"]
+                        prompt_data=decision["prompt_data"],
+                        complexity_level=complexity_level
                     )
                 
                 lesson_blocks.append(block)
@@ -88,12 +105,16 @@ class EnhancedBlockGenerator:
                 total_time_estimate=total_estimated_time
             )
             
+            # Add complexity levels to summary
+            scaffolding_summary["complexity_levels"] = complexity_levels_used
+            
             logger.info(
                 "Adaptive block generation completed",
                 blocks_generated=len(lesson_blocks),
                 full_scaffolds=scaffolding_summary["full_scaffolds"],
                 simple_prompts=scaffolding_summary["simple_prompts"],
-                total_time_estimate=total_estimated_time
+                total_time_estimate=total_estimated_time,
+                complexity_levels=complexity_levels_used
             )
             
             return lesson_blocks, scaffolding_summary
@@ -190,13 +211,15 @@ class EnhancedBlockGenerator:
         
         return factors
     
+    
     async def _generate_full_scaffold_block(
         self,
         skill: SkillSpec,
         context: GenerationContext,
         sequence_order: int,
+        complexity_level: str = "thinking_harder"
     ) -> LessonBlock:
-        """Generate a full scaffold block (existing logic with enhancements)"""
+        """Generate a full scaffold block with specified complexity level"""
         
         # Get scaffold resources
         scaffold_resources = await self.scaffold_retriever.retrieve_scaffold_resources(
@@ -216,12 +239,26 @@ class EnhancedBlockGenerator:
                 resource_hints += f"- {pdf['name']}: {pdf['content_preview'][:100]}...\n"
             rag_context += resource_hints
         
+        # Store original difficulty to restore later
+        original_difficulty = context.difficulty
+        
+        # Temporarily adjust difficulty to match complexity level
+        if complexity_level == "getting_started":
+            context.difficulty = 0.2  # Low difficulty for getting started
+        elif complexity_level == "thinking_harder":
+            context.difficulty = 0.5  # Medium difficulty for thinking harder
+        elif complexity_level == "stretching_thinking":
+            context.difficulty = 0.8  # High difficulty for stretching thinking
+        
         # Build generation prompt
         prompt = self.prompt_builder.build_block_prompt(
             skill=skill,
             context=context,
             rag_context=rag_context
         )
+        
+        # Restore original difficulty
+        context.difficulty = original_difficulty
         
         # Generate content using LLM
         complexity = self._determine_complexity(context.difficulty, skill.color)
@@ -234,13 +271,18 @@ class EnhancedBlockGenerator:
         generated_content = llm_result['content']
         self._validate_generated_content(generated_content, skill.block_type)
         
-        # Build complete lesson block
-        lesson_block = self._build_enhanced_lesson_block(
+        # Force the complexity level in case the LLM didn't include it
+        generated_content['complexity_level'] = complexity_level
+        
+        # Import the builder from main generator to use its method
+        from app.core.generation.block_generator import block_generator
+        
+        # Use the block generator's method to build the block
+        lesson_block = block_generator._build_enhanced_lesson_block(
             generated_content=generated_content,
             skill=skill,
             llm_metadata=llm_result,
-            scaffold_resources=scaffold_resources,
-            block_type="scaffold"
+            scaffold_resources=scaffold_resources
         )
         
         return lesson_block
@@ -250,9 +292,10 @@ class EnhancedBlockGenerator:
         skill: SkillSpec,
         context: GenerationContext,
         sequence_order: int,
-        prompt_data: Dict[str, Any]
+        prompt_data: Dict[str, Any],
+        complexity_level: str = "thinking_harder"
     ) -> LessonBlock:
-        """Generate a simple prompt block instead of full scaffold"""
+        """Generate a simple prompt block with specified complexity level"""
         
         # Create skill metadata
         skill_metadata = SkillMetadata(
@@ -265,12 +308,29 @@ class EnhancedBlockGenerator:
         # Create block ID
         block_id = f"prompt-{str(uuid.uuid4())[:8]}"
         
+        # Get complexity level display name
+        from app.core.skills.enhanced_metadata import enhanced_skill_metadata
+        complexity_display_name = enhanced_skill_metadata.get_cognitive_level_display_name(complexity_level)
+        
+        # Adjust prompt based on complexity level
+        main_prompt = prompt_data['main_prompt']
+        if complexity_level == "stretching_thinking" and not "why" in main_prompt.lower():
+            main_prompt += " Explain your reasoning in depth."
+        
         # Build steps for prompt activity
         steps = [
-            f"Present the question: {prompt_data['main_prompt']}",
+            f"Present the question: {main_prompt}",
             f"Use {prompt_data['interaction_type'].replace('_', ' ')} format",
             "Give students time to think and respond"
         ]
+        
+        # Add complexity-specific step
+        if complexity_level == "getting_started":
+            steps.insert(1, "Provide clear examples to support understanding")
+        elif complexity_level == "thinking_harder":
+            steps.insert(1, "Ask students to make connections to prior knowledge")
+        elif complexity_level == "stretching_thinking":
+            steps.insert(1, "Challenge students to consider multiple perspectives")
         
         # Add follow-up steps if available
         if prompt_data.get('follow_up_questions'):
@@ -282,23 +342,25 @@ class EnhancedBlockGenerator:
         lesson_block = LessonBlock(
             id=block_id,
             type="Prompt",
-            title=f"{skill.name}: {context.topic}",
-            description=f"Quick {skill.name} thinking discussion about {context.topic}",
+            title=f"{complexity_display_name} {skill.name}: {context.topic}",
+            description=f"{complexity_display_name} level {skill.name} thinking discussion about {context.topic}",
             steps=steps,
             skill=skill_metadata,
-            supporting_question=prompt_data['main_prompt'],
+            supporting_question=main_prompt,
+            complexity_level=complexity_level,
+            complexity_display_name=complexity_display_name,
             media=[],
             interaction_type=prompt_data['interaction_type'],
             follow_up_questions=prompt_data.get('follow_up_questions', []),
-            success_indicators=prompt_data.get('success_indicators', []),
-            estimated_duration=prompt_data['duration_minutes']
+            success_indicators=prompt_data.get('success_indicators', [])
         )
         
         logger.info(
             "Generated simple prompt block",
             block_id=block_id,
             skill=skill.name,
-            interaction_type=prompt_data['interaction_type']
+            interaction_type=prompt_data['interaction_type'],
+            complexity_level=complexity_level
         )
         
         return lesson_block

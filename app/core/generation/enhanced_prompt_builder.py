@@ -13,6 +13,7 @@ class EnhancedPromptBuilder:
     def __init__(self):
         self.metadata = enhanced_skill_metadata
     
+    
     def build_block_prompt(
         self,
         skill: SkillSpec,
@@ -20,7 +21,7 @@ class EnhancedPromptBuilder:
         rag_context: str = None
     ) -> str:
         """
-        Build comprehensive prompt using enhanced framework structure
+        Build comprehensive prompt using enhanced framework structure with cognitive complexity levels
         
         Args:
             skill: The thinking skill to use
@@ -41,8 +42,12 @@ class EnhancedPromptBuilder:
             if not block_definition:
                 raise ValidationError(f"No block definition found for: {skill.block_type}")
             
-            # Get difficulty level
-            difficulty_level = self.metadata.map_difficulty_to_level(context.difficulty)
+            # Get cognitive complexity level based on difficulty
+            complexity_level = self.metadata.map_difficulty_to_level(context.difficulty)
+            complexity_display_name = self.metadata.get_cognitive_level_display_name(complexity_level)
+            
+            # Get complexity-specific guidance
+            complexity_guidance = self.metadata.get_cognitive_complexity_guidance(skill.name, complexity_level)
             
             # Build comprehensive prompt
             prompt_parts = [
@@ -74,6 +79,26 @@ class EnhancedPromptBuilder:
                 f"Key Principle: {framework_guidance.get('key_principle', '')}",
                 ""
             ])
+            
+            # Add COGNITIVE COMPLEXITY LEVEL section - NEW
+            prompt_parts.extend([
+                "-" * 40,
+                f"COGNITIVE COMPLEXITY LEVEL: {complexity_display_name}",
+                "-" * 40,
+                ""
+            ])
+            
+            # Add complexity-specific guidance if available
+            if complexity_guidance:
+                prompt_parts.extend([
+                    f"Description: {complexity_guidance.get('description', '')}",
+                    f"Example: {complexity_guidance.get('example', '')}",
+                    f"Question Stem: {complexity_guidance.get('question_stem', '')}",
+                    f"Scaffold Level: {complexity_guidance.get('scaffold_level', '')}",
+                    ""
+                ])
+            
+            # [Rest of the method remains the same...]
             
             # Add block-specific guidance
             if skill.block_type == "MapIt":
@@ -128,17 +153,6 @@ class EnhancedPromptBuilder:
                     ""
                 ])
             
-            # Add difficulty-specific guidance
-            difficulty_guidance = self.metadata.get_difficulty_guidance(skill.name, difficulty_level)
-            if difficulty_guidance:
-                prompt_parts.extend([
-                    f"DIFFICULTY LEVEL: {difficulty_level.title()}",
-                    f"Description: {difficulty_guidance.get('description', '')}",
-                    f"Example: {difficulty_guidance.get('example', '')}",
-                    f"Scaffold Level: {difficulty_guidance.get('scaffold_level', '')}",
-                    ""
-                ])
-            
             # Add curriculum context
             if rag_context:
                 prompt_parts.extend([
@@ -183,12 +197,15 @@ class EnhancedPromptBuilder:
                 "OUTPUT REQUIREMENTS",
                 "=" * 60,
                 "",
+                f"Create a {complexity_display_name} level activity using the {skill.name} thinking skill.",
+                "",
                 "Return a JSON object with the following structure:",
                 "{",
                 '  "title": "Engaging, age-appropriate activity title",',
                 '  "description": "Clear 2-3 sentence explanation of what students will do",',
                 '  "steps": ["Step 1: Specific action", "Step 2: Specific action", "Step 3: etc."],',
-                f'  "supporting_question": "A question that specifically develops {skill.name} thinking"'
+                f'  "supporting_question": "A question that specifically develops {skill.name} thinking at {complexity_display_name} level",',
+                f'  "complexity_level": "{complexity_level}"'
             ])
             
             # Add block-specific output requirements
@@ -207,14 +224,14 @@ class EnhancedPromptBuilder:
                 "}",
                 "",
                 "QUALITY REQUIREMENTS:",
-                f"• Ensure the activity truly develops the {skill.name} thinking skill",
+                f"• Ensure the activity truly develops the {skill.name} thinking skill at the {complexity_display_name} level",
                 f"• Use {skill.block_type} methodology appropriately",
                 f"• Make it age-appropriate for {context.grade}",
                 f"• Align with {context.curriculum} standards",
                 f"• Include specific, actionable steps",
                 f"• Create meaningful learning, not just busy work",
                 "",
-                f"Focus on creating an activity that genuinely helps students practice and develop {skill.name} thinking through {skill.block_type} methodology."
+                f"Focus on creating a {complexity_display_name} level activity that genuinely helps students practice and develop {skill.name} thinking through {skill.block_type} methodology."
             ])
             
             complete_prompt = "\n".join(prompt_parts)
@@ -223,8 +240,8 @@ class EnhancedPromptBuilder:
                 "Enhanced prompt built successfully",
                 skill=skill.name,
                 block_type=skill.block_type,
-                prompt_length=len(complete_prompt),
-                difficulty_level=difficulty_level
+                complexity_level=complexity_display_name,
+                prompt_length=len(complete_prompt)
             )
             
             return complete_prompt
@@ -232,17 +249,17 @@ class EnhancedPromptBuilder:
         except Exception as e:
             logger.error("Error building enhanced prompt", error=str(e), skill=skill.name)
             raise ValidationError(f"Failed to build enhanced prompt: {str(e)}")
-    
-    def _get_difficulty_text(self, difficulty: float) -> str:
-        """Convert difficulty number to descriptive text"""
-        level = self.metadata.map_difficulty_to_level(difficulty)
-        level_descriptions = {
-            "foundational": "simple and accessible",
-            "developing": "moderate complexity with some challenge",
-            "proficient": "appropriately challenging",
-            "advanced": "complex and sophisticated"
-        }
-        return level_descriptions.get(level, "moderate")
+        
+        def _get_difficulty_text(self, difficulty: float) -> str:
+            """Convert difficulty number to descriptive text"""
+            level = self.metadata.map_difficulty_to_level(difficulty)
+            level_descriptions = {
+                "foundational": "simple and accessible",
+                "developing": "moderate complexity with some challenge",
+                "proficient": "appropriately challenging",
+                "advanced": "complex and sophisticated"
+            }
+            return level_descriptions.get(level, "moderate")
 
 
 # Global instance

@@ -1,8 +1,8 @@
 import random
 from typing import List, Dict, Optional
 from app.core.skills.enhanced_metadata import enhanced_skill_metadata
-from app.models.lesson import SkillSpec
 from app.utils.exceptions import SkillSelectionError
+from app.models.lesson import SkillSpec, GenerationContext
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -226,6 +226,86 @@ class EnhancedSkillSelector:
                 all_skills.append(skill_spec)
         
         return all_skills
+    
+    def select_complexity_level(
+        self,
+        skill: SkillSpec,
+        context: GenerationContext,
+        position: int,
+        total_steps: int,
+        previous_levels: List[str] = None
+    ) -> str:
+        """
+        Select appropriate cognitive complexity level based on multiple factors
+        
+        Args:
+            skill: The thinking skill
+            context: Generation context
+            position: Position in the lesson sequence
+            total_steps: Total steps in the lesson
+            previous_levels: Previously used complexity levels
+            
+        Returns:
+            Complexity level string (getting_started, thinking_harder, stretching_thinking)
+        """
+        previous_levels = previous_levels or []
+        
+        # Default mapping based on difficulty
+        base_level = self.metadata.map_difficulty_to_level(context.difficulty)
+        
+        # Adjust based on grade level
+        grade_number = self._extract_grade_number(context.grade)
+        
+        # Early grades (1-3) should use simpler complexity by default
+        if grade_number and grade_number <= 3 and base_level == "stretching_thinking":
+            base_level = "thinking_harder"
+        
+        # Higher grades (7+) can handle more complex tasks
+        if grade_number and grade_number >= 7 and base_level == "getting_started":
+            base_level = "thinking_harder"
+        
+        # Adjust based on position in lesson
+        # First step should be simpler to build confidence
+        if position == 0 and base_level == "stretching_thinking":
+            return "thinking_harder"
+        
+        # Last step can be more challenging to extend thinking
+        if position == total_steps - 1 and base_level == "getting_started":
+            return "thinking_harder"
+        
+        # Avoid using the same level for more than 2 consecutive steps
+        if len(previous_levels) >= 2:
+            if previous_levels[-1] == previous_levels[-2] == base_level:
+                # Choose a different level
+                if base_level == "getting_started":
+                    return "thinking_harder"
+                elif base_level == "stretching_thinking":
+                    return "thinking_harder"
+                else:
+                    # If we're at thinking_harder, choose randomly between simpler and more complex
+                    return random.choice(["getting_started", "stretching_thinking"])
+        
+        # Adjust based on skill color
+        # Red skills are naturally more complex
+        if skill.color == "Red" and base_level == "getting_started":
+            return "thinking_harder"
+        
+        # Green skills are naturally simpler
+        if skill.color == "Green" and base_level == "stretching_thinking":
+            return "thinking_harder"
+        
+        return base_level
+
+    def _extract_grade_number(self, grade: str) -> Optional[int]:
+        """Extract numeric grade level from grade string"""
+        try:
+            if 'Year' in grade:
+                return int(''.join(filter(str.isdigit, grade)))
+            elif 'Grade' in grade:
+                return int(''.join(filter(str.isdigit, grade)))
+            return None
+        except (ValueError, TypeError):
+            return None
 
 
 # Global instance  

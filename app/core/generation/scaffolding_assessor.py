@@ -39,7 +39,8 @@ class ScaffoldingAssessor:
         available_time_minutes: Optional[int] = None,
         sequence_position: int = 0,
         total_steps: int = 3,
-        previous_scaffolds_count: int = 0
+        previous_scaffolds_count: int = 0,
+        complexity_level: str = "thinking_harder"
     ) -> bool:
         """
         Determine if this step needs full scaffolding or can use simple prompt
@@ -51,11 +52,23 @@ class ScaffoldingAssessor:
             sequence_position: Position in lesson (0-based)
             total_steps: Total number of steps in lesson
             previous_scaffolds_count: Number of full scaffolds already used
+            complexity_level: Cognitive complexity level
             
         Returns:
             True if full scaffold needed, False for simple prompt
         """
         try:
+            # Adjust based on complexity level
+            if complexity_level == "stretching_thinking":
+                # More complex thinking usually benefits from scaffolding
+                scaffold_bias = 0.8  # Higher chance of using scaffold
+            elif complexity_level == "getting_started":
+                # Simpler thinking may work well with prompts
+                scaffold_bias = 0.5  # Balanced chance
+            else:
+                # Middle level
+                scaffold_bias = 0.6  # Slightly higher chance of scaffold
+            
             # 1. Time pressure assessment
             if available_time_minutes:
                 avg_time_per_step = available_time_minutes / total_steps
@@ -83,8 +96,11 @@ class ScaffoldingAssessor:
                     # Use variety - don't make all prompts
                     if previous_scaffolds_count == 0:
                         return True  # Ensure at least one scaffold in lesson
-                    # 40% chance of prompt for variety
-                    use_prompt = random.random() < 0.4
+                    
+                    # Adjust probability based on complexity level
+                    prompt_probability = 0.4 * (1 - scaffold_bias)
+                    use_prompt = random.random() < prompt_probability
+                    
                     if use_prompt:
                         logger.info(f"Using prompt for variety: {skill.name}")
                         return False
@@ -101,7 +117,8 @@ class ScaffoldingAssessor:
             # 5. Variety management
             # If we've had too many scaffolds in a row, consider a prompt
             if previous_scaffolds_count >= 2 and skill.color in ["Green", "Blue"]:
-                if random.random() < 0.3:  # 30% chance
+                prompt_probability = 0.3 * (1 - scaffold_bias)
+                if random.random() < prompt_probability:  
                     logger.info(f"Breaking scaffold sequence with prompt: {skill.name}")
                     return False
             
@@ -116,13 +133,18 @@ class ScaffoldingAssessor:
                 if skill.color == "Orange":  # Language skills
                     return True
             
-            # 7. Default decision
-            # BuildIt almost always gets scaffolding (when time allows)
-            if skill.block_type == "BuildIt":
+            # 7. Complexity-based decision
+            # For stretching_thinking, prefer scaffolding for most skills
+            if complexity_level == "stretching_thinking" and skill.color in ["Yellow", "Red"]:
                 return True
             
-            # Most other cases get scaffolding
-            return True
+            # For getting_started, simple prompts often work well for Green skills
+            if complexity_level == "getting_started" and skill.color == "Green":
+                if random.random() < 0.5:  # 50% chance of prompt
+                    return False
+            
+            # 8. Final probability check based on scaffold_bias
+            return random.random() < scaffold_bias
             
         except Exception as e:
             logger.error("Error in scaffolding assessment", error=str(e), skill=skill.name)

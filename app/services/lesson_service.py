@@ -230,10 +230,39 @@ class LessonService:
         step_count: int,
         rag_enhanced: bool = False
     ) -> LessonMetadata:
-        """Create enhanced metadata for the lesson"""
+        """Create enhanced metadata for the lesson with complexity levels"""
         
         skills_used = [skill.name for skill in skills]
         cognitive_progression = [skill.color for skill in skills]
+        
+        # Determine complexity levels based on difficulty
+        from app.core.skills.enhanced_metadata import enhanced_skill_metadata
+        
+        complexity_level = enhanced_skill_metadata.map_difficulty_to_level(difficulty)
+        complexity_display = enhanced_skill_metadata.get_cognitive_level_display_name(complexity_level)
+        
+        # For variety, we might use different complexity levels for different blocks
+        # If difficulty is in the middle range, mix complexity levels
+        complexity_levels = []
+        
+        if 0.3 <= difficulty <= 0.7:
+            # Mix complexity levels for variety
+            if step_count >= 3:
+                # Start easier, then get harder
+                complexity_levels = [
+                    enhanced_skill_metadata.get_cognitive_level_display_name("getting_started"),
+                    enhanced_skill_metadata.get_cognitive_level_display_name("thinking_harder"),
+                    enhanced_skill_metadata.get_cognitive_level_display_name("stretching_thinking")
+                ]
+                # If more steps, repeat pattern
+                while len(complexity_levels) < step_count:
+                    complexity_levels.append(complexity_levels[len(complexity_levels) % 3])
+            else:
+                # For 1-2 steps, use the middle level
+                complexity_levels = [complexity_display] * step_count
+        else:
+            # For very easy or very hard, use consistent level
+            complexity_levels = [complexity_display] * step_count
         
         # Estimate duration based on step count and difficulty
         base_duration = step_count * 12  # 12 minutes per block
@@ -241,10 +270,9 @@ class LessonService:
         estimated_minutes = int(base_duration * difficulty_multiplier)
         
         difficulty_labels = {
-            (0.0, 0.3): "Foundational",
-            (0.3, 0.5): "Developing", 
-            (0.5, 0.7): "Proficient",
-            (0.7, 1.0): "Advanced"
+            (0.0, 0.33): "Foundational",
+            (0.33, 0.67): "Developing", 
+            (0.67, 1.0): "Advanced"
         }
         
         difficulty_level = "Developing"  # default
@@ -261,7 +289,8 @@ class LessonService:
             skills_used=skills_used,
             cognitive_progression=cognitive_progression,
             estimated_duration=f"{estimated_minutes} minutes",
-            difficulty_level=difficulty_level
+            difficulty_level=difficulty_level,
+            complexity_levels=complexity_levels[:step_count]  # Ensure we don't exceed step count
         )
     
     async def _save_lesson_plan(

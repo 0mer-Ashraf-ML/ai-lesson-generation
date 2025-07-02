@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Lesson Block Schema",
-  "description": "JSON schema for validating lesson block structure in Structural Learning platform",
+  "description": "JSON schema for validating lesson block structure with cognitive complexity levels",
   "type": "object",
   "required": [
     "id",
@@ -10,17 +10,19 @@
     "description",
     "steps",
     "skill",
-    "supporting_question"
+    "supporting_question",
+    "complexity_level",
+    "complexity_display_name"
   ],
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^block-[a-zA-Z0-9]{8}$",
-      "description": "Unique identifier for the block (format: block-xxxxxxxx)"
+      "pattern": "^(block|prompt)-[a-zA-Z0-9]{8}$",
+      "description": "Unique identifier for the block (format: block-xxxxxxxx or prompt-xxxxxxxx)"
     },
     "type": {
       "type": "string",
-      "enum": ["MapIt", "SayIt", "BuildIt"],
+      "enum": ["MapIt", "SayIt", "BuildIt", "Prompt"],
       "description": "The type of learning block from Structural Learning framework"
     },
     "title": {
@@ -94,6 +96,16 @@
       "maxLength": 200,
       "description": "Question that guides student thinking and supports the skill development"
     },
+    "complexity_level": {
+      "type": "string",
+      "enum": ["getting_started", "thinking_harder", "stretching_thinking"],
+      "description": "Cognitive complexity level of the activity"
+    },
+    "complexity_display_name": {
+      "type": "string",
+      "enum": ["Getting Started", "Thinking Harder", "Stretching Thinking"],
+      "description": "Human-readable display name for the cognitive complexity level"
+    },
     "media": {
       "type": "array",
       "items": {
@@ -142,6 +154,62 @@
       },
       "maxItems": 6,
       "description": "Evaluation criteria for judgment and decision-making activities"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "name", "url"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["pdf", "video", "image"],
+            "description": "Type of resource"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "description": "Name of the resource"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Description of the resource"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the resource"
+          }
+        }
+      },
+      "maxItems": 5,
+      "description": "Supporting resources for the activity"
+    },
+    "interaction_type": {
+      "type": "string",
+      "description": "Type of interaction for prompt blocks (think_pair_share, whole_class, etc.)"
+    },
+    "follow_up_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 200
+      },
+      "maxItems": 5,
+      "description": "Follow-up questions for prompt blocks"
+    },
+    "success_indicators": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 200
+      },
+      "maxItems": 5,
+      "description": "Success indicators for prompt blocks"
     }
   },
   "additionalProperties": false,

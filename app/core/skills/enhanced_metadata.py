@@ -117,15 +117,58 @@ class EnhancedSkillMetadataManager:
         return []
     
     def map_difficulty_to_level(self, difficulty: float) -> str:
-        """Map difficulty float to level name"""
-        if difficulty <= 0.25:
-            return "foundational"
-        elif difficulty <= 0.5:
-            return "developing"
-        elif difficulty <= 0.75:
-            return "proficient"
+        """Map difficulty float to cognitive complexity level name
+        
+        Args:
+            difficulty: A float between 0.0 and 1.0 representing difficulty
+            
+        Returns:
+            String representing the cognitive complexity level
+        """
+        if difficulty <= 0.33:
+            return "getting_started"
+        elif difficulty <= 0.67:
+            return "thinking_harder"
         else:
-            return "advanced"
+            return "stretching_thinking"
+        
+    def get_cognitive_level_display_name(self, level: str) -> str:
+        """Get the display name for a cognitive complexity level
+        
+        Args:
+            level: Internal level name (getting_started, thinking_harder, stretching_thinking)
+            
+        Returns:
+            User-friendly display name
+        """
+        display_names = {
+            "getting_started": "Getting Started",
+            "thinking_harder": "Thinking Harder",
+            "stretching_thinking": "Stretching Thinking"
+        }
+        return display_names.get(level, level.replace("_", " ").title())
+    
+    def get_cognitive_complexity_guidance(self, skill_name: str, complexity_level: str) -> Optional[Dict]:
+        """Get guidance for a specific cognitive complexity level of a skill
+        
+        Args:
+            skill_name: The name of the thinking skill
+            complexity_level: The cognitive complexity level (getting_started, thinking_harder, stretching_thinking)
+            
+        Returns:
+            Dictionary containing guidance for the specified complexity level, or None if not found
+        """
+        skill_data = self.get_skill_with_framework_guidance(skill_name)
+        if not skill_data:
+            return None
+            
+        # Check if skill has cognitive complexity levels defined
+        if "cognitive_complexity_levels" not in skill_data:
+            return None
+            
+        # Return guidance for the specified level
+        complexity_levels = skill_data["cognitive_complexity_levels"]
+        return complexity_levels.get(complexity_level)
     
     def get_skills_for_subject_preference(self, subject: str) -> Dict[str, float]:
         """Get skill preferences based on subject area"""
